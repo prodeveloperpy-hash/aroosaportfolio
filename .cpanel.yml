@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - /bin/mkdir -p $HOME/public_html/assets
+    - /bin/cp index.html $HOME/public_html/
+    - /bin/cp styles.css $HOME/public_html/
+    - /bin/cp main.js $HOME/public_html/
+    - /bin/cp favicon.svg $HOME/public_html/
+    - /bin/cp -R assets/. $HOME/public_html/assets/
