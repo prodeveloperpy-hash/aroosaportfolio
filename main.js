@@ -1,6 +1,6 @@
 /* Email lives on <body data-email="..."> in index.html. Change it there. */
 (() => {
-  const email = (document.body.dataset.email || "hello@aroosa.co").trim();
+  const email = (document.body.dataset.email || "info@recruitexa.com").trim();
 
   document.querySelectorAll("[data-email-link]").forEach((node) => {
     if (node.tagName === "A") node.setAttribute("href", `mailto:${email}`);
@@ -52,7 +52,7 @@
   function applyTheme(theme) {
     const dark = theme === "dark";
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    if (themeMeta) themeMeta.setAttribute("content", dark ? "#070e18" : "#f3f7fc");
+    if (themeMeta) themeMeta.setAttribute("content", dark ? "#071226" : "#123a8c");
     if (themeBtn) {
       themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
       themeBtn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
@@ -72,16 +72,16 @@
       applyTheme(next);
     });
   }
-
+ 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const typed = document.getElementById("typed");
   if (typed) {
     const phrases = [
       ["Care in ", "the hiring."],
-      ["Clarity in ", "the books."],
       ["The right ", "names."],
-      ["The month, ", "readable."],
+      ["The search, ", "quiet."],
+      ["The short ", "list."],
       ["The next ", "conversation."]
     ];
     const paint = (phrase, count) => {
@@ -221,6 +221,94 @@
       { threshold: 0.08, rootMargin: "0px 0px -4% 0px" }
     );
     revealNodes.forEach((node) => observer.observe(node));
+  }
+
+  const showRoot = document.getElementById("service-show");
+  if (showRoot) {
+    const tabs = [...showRoot.querySelectorAll(".show-rail button")];
+    const panes = [...showRoot.querySelectorAll(".show-pane")];
+    let cursor = 0;
+    let timer = 0;
+    let hold = false;
+
+    function showService(id, scroll) {
+      const index = panes.findIndex((pane) => pane.id === id);
+      if (index < 0) return;
+      cursor = index;
+      panes.forEach((pane, i) => {
+        const on = i === index;
+        pane.classList.toggle("is-on", on);
+        pane.hidden = !on;
+        const photo = pane.querySelector(".show-photo");
+        if (photo) photo.style.transform = "";
+      });
+      tabs.forEach((tab, i) => {
+        const on = i === index;
+        tab.setAttribute("aria-selected", on ? "true" : "false");
+        tab.tabIndex = on ? 0 : -1;
+      });
+      if (scroll) {
+        document.getElementById("services").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      }
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        hold = true;
+        window.clearInterval(timer);
+        showService(tab.getAttribute("aria-controls"), false);
+        history.replaceState(null, "", "#" + tab.getAttribute("aria-controls"));
+      });
+    });
+
+    function fromHash(scroll) {
+      const id = location.hash.replace("#", "");
+      if (panes.some((pane) => pane.id === id)) showService(id, scroll);
+    }
+
+    window.addEventListener("hashchange", () => fromHash(true));
+    fromHash(false);
+
+    if (!reduceMotion) {
+      const tick = () => {
+        if (hold) return;
+        cursor = (cursor + 1) % panes.length;
+        showService(panes[cursor].id, false);
+      };
+      const play = () => {
+        window.clearInterval(timer);
+        if (hold || showRoot.matches(":hover")) return;
+        timer = window.setInterval(tick, 5200);
+      };
+      play();
+      showRoot.addEventListener("mouseenter", () => {
+        hold = true;
+        window.clearInterval(timer);
+      });
+      showRoot.addEventListener("mouseleave", () => {
+        hold = false;
+        play();
+      });
+      showRoot.addEventListener("focusin", () => window.clearInterval(timer));
+      showRoot.addEventListener("focusout", play);
+    }
+
+    if (!reduceMotion) {
+      showRoot.addEventListener("mousemove", (event) => {
+        const photo = showRoot.querySelector(".show-pane.is-on .show-photo");
+        if (!photo) return;
+        const box = photo.getBoundingClientRect();
+        const x = (event.clientX - box.left) / box.width - 0.5;
+        const y = (event.clientY - box.top) / box.height - 0.5;
+        if (Math.abs(x) > 0.7 || Math.abs(y) > 0.7) return;
+        photo.style.transform = `rotateY(${(x * 8).toFixed(2)}deg) rotateX(${(-y * 6).toFixed(2)}deg)`;
+      });
+      showRoot.addEventListener("mouseleave", () => {
+        showRoot.querySelectorAll(".show-photo").forEach((photo) => {
+          photo.style.transform = "";
+        });
+      });
+    }
   }
 
   const form = document.getElementById("brief");
