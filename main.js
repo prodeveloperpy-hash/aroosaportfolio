@@ -346,7 +346,6 @@
   if (again) again.addEventListener("click", resetForm);
 
   if (form) {
-    form.action = `mailto:${email}`;
     form.addEventListener("input", (event) => {
       const field = event.target.closest(".field");
       if (!field) return;
@@ -355,7 +354,7 @@
       if (note && !form.querySelector(".is-invalid")) note.textContent = "";
     });
 
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
       clearInvalid();
 
@@ -392,18 +391,19 @@
         return;
       }
 
-      const data = new FormData(form);
-      const service = String(data.get("service") || "").trim();
-      const body = [
-        `Name: ${String(data.get("name") || "").trim()}`,
-        `Company: ${String(data.get("company") || "").trim() || "—"}`,
-        `Regarding: ${service}`,
-        "",
-        String(data.get("message") || "").trim()
-      ].join("\n");
+      note.textContent = "Sending…";
+      try {
+        const response = await fetch("send.php", { method: "POST", body: new FormData(form) });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.ok) {
+          note.textContent = result.error || `The note could not be sent. Write to ${email}.`;
+          return;
+        }
+      } catch (err) {
+        note.textContent = `The note could not be sent. Write to ${email}.`;
+        return;
+      }
 
-      const subject = `A conversation — ${service}`;
-      window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       form.hidden = true;
       success.hidden = false;
       success.focus();
