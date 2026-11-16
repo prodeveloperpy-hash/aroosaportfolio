@@ -38,10 +38,92 @@ if (strlen($name) < 2 || !filter_var($from, FILTER_VALIDATE_EMAIL) || strlen($se
 }
 
 $to = 'info@recruitexa.com';
-$subject = 'A conversation — ' . $service;
-$body = "Name: {$name}\nCompany: " . ($company !== '' ? $company : '—') . "\nEmail: {$from}\nRegarding: {$service}\n\n{$message}\n";
-$headers = "From: Marium <info@recruitexa.com>\r\nReply-To: {$from}\r\nContent-Type: text/plain; charset=UTF-8\r\n";
-$sent = mail($to, $subject, $body, $headers, '-finfo@recruitexa.com');
+$subject = 'A conversation - ' . $service;
+$body = "Name: {$name}\nCompany: " . ($company !== '' ? $company : '-') . "\nEmail: {$from}\nRegarding: {$service}\n\n{$message}\n";
+
+function smtp_command($fp, $command) {
+  fwrite($fp, $command . "\r\n");
+  $data = '';
+  while (($line = fgets($fp, 515)) !== false) {
+    $data .= $line;
+    if (isset($line[3]) && $line[3] === ' ') {
+      break;
+    }
+  }
+  return $data;
+}
+
+function smtp_send($to, $subject, $body, $reply) {
+  $reason = 'The mail server did not accept the note.';
+  foreach ([25, 587] as $port) {
+    $fp = @stream_socket_client('tcp://127.0.0.1:' . $port, $errno, $errstr, 8);
+    if (!$fp) {
+      $reason = trim($errstr) !== '' ? $errstr : 'Could not reach the mail server.';
+      continue;
+    }
+    stream_set_timeout($fp, 8);
+    $banner = '';
+    while (($line = fgets($fp, 515)) !== false) {
+      $banner .= $line;
+      if (isset($line[3]) && $line[3] === ' ') {
+        break;
+      }
+    }
+    if (strpos($banner, '220') !== 0) {
+      $reason = trim($banner) !== '' ? trim($banner) : $reason;
+      fclose($fp);
+      continue;
+    }
+    smtp_command($fp, 'EHLO recruitexa.com');
+    $mail = smtp_command($fp, 'MAIL FROM:<info@recruitexa.com>');
+    if (strpos($mail, '250') !== 0) {
+      $reason = trim($mail);
+      smtp_command($fp, 'QUIT');
+      fclose($fp);
+      continue;
+    }
+    $rcpt = smtp_command($fp, 'RCPT TO:<' . $to . '>');
+    if (strpos($rcpt, '250') !== 0 && strpos($rcpt, '251') !== 0) {
+      $reason = trim($rcpt);
+      smtp_command($fp, 'QUIT');
+      fclose($fp);
+      continue;
+    }
+    $data = smtp_command($fp, 'DATA');
+    if (strpos($data, '354') !== 0) {
+      $reason = trim($data);
+      smtp_command($fp, 'QUIT');
+      fclose($fp);
+      continue;
+    }
+    $message = "From: Marium <info@recruitexa.com>\r\n";
+    $message .= 'To: <' . $to . ">\r\n";
+    $message .= 'Reply-To: <' . $reply . ">\r\n";
+    $message .= 'Subject: ' . $subject . "\r\n";
+    $message .= "MIME-Version: 1.0\r\n";
+    $message .= "Content-Type: text/plain; charset=UTF-8\r\n\r\n";
+    $message .= preg_replace('/^\./m', '..', str_replace("\n", "\r\n", $body));
+    $message .= "\r\n.\r\n";
+    fwrite($fp, $message);
+    $done = '';
+    while (($line = fgets($fp, 515)) !== false) {
+      $done .= $line;
+      if (isset($line[3]) && $line[3] === ' ') {
+        break;
+      }
+    }
+    smtp_command($fp, 'QUIT');
+    fclose($fp);
+    if (strpos($done, '250') === 0) {
+      return [true, ''];
+    }
+    $reason = trim($done) !== '' ? trim($done) : $reason;
+  }
+  error_log('send.php: ' . $reason);
+  return [false, $reason];
+}
+
+[$sent, $reason] = smtp_send($to, $subject, $body, $from);
 
 if (!$sent) {
   http_response_code(500);
