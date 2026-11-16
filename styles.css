@@ -1644,15 +1644,21 @@ html[data-theme="dark"] .offer li {
 .skill-lead span:nth-child(1) { background: linear-gradient(135deg, #123a8c, #3b82f6); }
 .skill-lead span:nth-child(2) { background: linear-gradient(135deg, #8b2438, #c46a78); animation-delay: 0.2s; }
 .skill-lead span:nth-child(3) { background: linear-gradient(135deg, #fffcf9, #e7eef8); color: #123a8c; animation-delay: 0.4s; }
+.skill-lead span:nth-child(4) { background: linear-gradient(135deg, #123a8c, #1a4fbf); animation-delay: 0.55s; }
+.skill-lead span:nth-child(5) { background: linear-gradient(135deg, #8b2438, #c46a78); animation-delay: 0.7s; }
+
+.skill-note {
+  max-width: 44ch;
+  margin: 0 0 1.7rem;
+  color: #c5d8f5;
+  font-size: 1.05rem;
+}
 
 .skill-board {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.8rem;
 }
-
-.skill-card { grid-column: span 2; }
-.skill-card:nth-child(7) { grid-column: 1 / -1; }
 
 .skill-card {
   position: relative;
@@ -1707,7 +1713,7 @@ html[data-theme="dark"] .offer li {
   font-weight: 500;
   font-size: 1.55rem;
   letter-spacing: -0.02em;
-  color: #fff;
+  color: inherit;
   margin-bottom: 0.75rem;
 }
 
@@ -1724,8 +1730,17 @@ html[data-theme="dark"] .offer li {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.28);
-  color: #fff;
+  color: inherit;
   font-size: 0.8rem;
+}
+
+.skill-card.is-light {
+  color: var(--ink, #123a8c);
+}
+
+.skill-card.is-light li {
+  background: rgba(18, 58, 140, 0.08);
+  border-color: rgba(18, 58, 140, 0.16);
 }
 
 /* Tiles */
@@ -2234,8 +2249,8 @@ form[hidden] { display: none; }
   .skill-board { grid-template-columns: 1fr 1fr; }
 
   .skill-card,
-  .skill-card:nth-child(n + 4) { grid-column: auto; }
-  .skill-card:last-child { grid-column: 1 / -1; }
+  .skill-card:nth-child(n + 4),
+  .skill-card:last-child { grid-column: auto; }
 
   .footer-grid,
   .contact-grid { grid-template-columns: 1fr; }
