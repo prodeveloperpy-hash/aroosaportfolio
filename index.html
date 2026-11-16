@@ -26,7 +26,7 @@
       document.documentElement.setAttribute("data-theme", "light");
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=34">
+  <link rel="stylesheet" href="styles.css?v=47">
 </head>
 <body data-email="info@recruitexa.com">
   <svg class="sprite" aria-hidden="true">
@@ -61,6 +61,7 @@
     </symbol>
   </svg>
   <a class="skip" href="#services">Skip to the work</a>
+  <aside class="ping-stack" id="ping-stack" aria-live="polite"></aside>
   <div class="progress" aria-hidden="true"></div>
   <div class="aurora" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
@@ -134,7 +135,7 @@
             <a class="soc-in" href="https://www.linkedin.com/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-in"/></svg></a>
             <a class="soc-fb" href="https://www.facebook.com/" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-fb"/></svg></a>
             <a class="soc-ig" href="https://www.instagram.com/" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-ig"/></svg></a>
-            <a class="soc-wa" href="https://wa.me/" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-wa"/></svg></a>
+            <a class="soc-wa" href="https://wa.me/17868877796" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-wa"/></svg></a>
             <a class="soc-mail" href="mailto:info@recruitexa.com" data-email-link aria-label="Email"><svg aria-hidden="true"><use href="#logo-mail"/></svg></a>
           </div>
           <a class="social-mail" href="mailto:info@recruitexa.com" data-email-link>info@recruitexa.com</a>
@@ -183,6 +184,7 @@
           <h2>The work.</h2>
         </div>
         <div class="show" id="service-show">
+          <div class="show-progress" id="service-progress" aria-hidden="true"></div>
           <div class="show-rail" role="tablist" aria-label="Services">
             <button type="button" role="tab" id="tab-recruitment" aria-controls="recruitment" aria-selected="true">Recruitment</button>
             <button type="button" role="tab" id="tab-talent-sourcing" aria-controls="talent-sourcing" aria-selected="false">Sourcing</button>
@@ -195,7 +197,10 @@
           </div>
           <div class="show-stage">
             <article class="show-pane is-on" id="recruitment" role="tabpanel" aria-labelledby="tab-recruitment">
-              <div class="show-photo"><img src="assets/real-recruit.jpg" alt="A hiring conversation across a meeting table."></div>
+              <div class="show-photo">
+                <img src="assets/real-recruit.jpg" alt="A hiring conversation across a meeting table.">
+                <span class="show-tag">Recruitment</span>
+              </div>
               <div class="show-copy">
                 <h3>Recruitment</h3>
                 <p class="show-line">From the brief to the person who starts.</p>
@@ -215,7 +220,10 @@
               </div>
             </article>
             <article class="show-pane" id="talent-sourcing" role="tabpanel" aria-labelledby="tab-talent-sourcing" hidden>
-              <div class="show-photo"><img src="assets/real-talent.jpg" alt="A quiet view over a working city."></div>
+              <div class="show-photo">
+                <img src="assets/real-talent.jpg" alt="A quiet view over a working city.">
+                <span class="show-tag">Sourcing</span>
+              </div>
               <div class="show-copy">
                 <h3>Talent sourcing</h3>
                 <p class="show-line">The names, found before the seat is empty.</p>
@@ -235,7 +243,10 @@
               </div>
             </article>
             <article class="show-pane" id="reverse-recruiting" role="tabpanel" aria-labelledby="tab-reverse-recruiting" hidden>
-              <div class="show-photo"><img src="assets/recruit.jpg" alt="A private conversation about the next role."></div>
+              <div class="show-photo">
+                <img src="assets/recruit.jpg" alt="A private conversation about the next role.">
+                <span class="show-tag">Reverse</span>
+              </div>
               <div class="show-copy">
                 <h3>Reverse recruiting</h3>
                 <p class="show-line">The search, run for the person, not the vacancy.</p>
@@ -254,7 +265,10 @@
               </div>
             </article>
             <article class="show-pane" id="cv-career" role="tabpanel" aria-labelledby="tab-cv-career" hidden>
-              <div class="show-photo"><img src="assets/books.jpg" alt="A journal, a pen, and a blank page ready to write."></div>
+              <div class="show-photo">
+                <img src="assets/real-books.jpg" alt="Books and a desk set for a written page.">
+                <span class="show-tag">CV &amp; career</span>
+              </div>
               <div class="show-copy">
                 <h3>CV &amp; career</h3>
                 <p class="show-line">A page someone is glad to send.</p>
@@ -272,7 +286,10 @@
               </div>
             </article>
             <article class="show-pane" id="hr-consulting" role="tabpanel" aria-labelledby="tab-hr-consulting" hidden>
-              <div class="show-photo"><img src="assets/real-people.jpg" alt="Colleagues together in a bright office."></div>
+              <div class="show-photo">
+                <img src="assets/real-people.jpg" alt="Colleagues together in a bright office.">
+                <span class="show-tag">HR</span>
+              </div>
               <div class="show-copy">
                 <h3>HR consulting</h3>
                 <p class="show-line">The desk, set so the week can repeat.</p>
@@ -292,7 +309,10 @@
               </div>
             </article>
             <article class="show-pane" id="agency-support" role="tabpanel" aria-labelledby="tab-agency-support" hidden>
-              <div class="show-photo"><img src="assets/office.jpg" alt="A private office desk above a city at night."></div>
+              <div class="show-photo">
+                <img src="assets/real-office.jpg" alt="A working office, ready for a client desk.">
+                <span class="show-tag">Agency</span>
+              </div>
               <div class="show-copy">
                 <h3>Agency support</h3>
                 <p class="show-line">Sourcing that carries your name, not ours.</p>
@@ -311,7 +331,10 @@
               </div>
             </article>
             <article class="show-pane" id="talent-services" role="tabpanel" aria-labelledby="tab-talent-services" hidden>
-              <div class="show-photo"><img src="assets/talent.jpg" alt="A view across a city, used for market and hiring plans."></div>
+              <div class="show-photo">
+                <img src="assets/talent.jpg" alt="A view across a city, used for market and hiring plans.">
+                <span class="show-tag">Strategy</span>
+              </div>
               <div class="show-copy">
                 <h3>Hiring strategy</h3>
                 <p class="show-line">The plan, before anyone is called.</p>
@@ -327,7 +350,10 @@
               </div>
             </article>
             <article class="show-pane" id="business-development" role="tabpanel" aria-labelledby="tab-business-development" hidden>
-              <div class="show-photo"><img src="assets/people.jpg" alt="Letters and a pen, ready for outreach."></div>
+              <div class="show-photo">
+                <img src="assets/people.jpg" alt="Letters and a pen, ready for outreach.">
+                <span class="show-tag">Business</span>
+              </div>
               <div class="show-copy">
                 <h3>Business development</h3>
                 <p class="show-line">The next conversation, opened with care.</p>
@@ -448,42 +474,62 @@
           <p class="kicker">Method</p>
           <h2>How it moves.</h2>
         </div>
-        <div class="wire reveal">
-          <svg class="wire-svg" viewBox="0 0 1100 90" preserveAspectRatio="none" aria-hidden="true">
-            <path id="wirePath" class="wire-path" d="M110 36 C 200 36, 250 62, 330 36 C 410 10, 470 10, 550 36 C 630 62, 690 62, 770 36 C 850 10, 910 10, 990 36"/>
-            <circle class="wire-spark" r="5">
-              <animateMotion dur="2.8s" repeatCount="indefinite">
-                <mpath href="#wirePath"/>
+        <div class="method-layout">
+        <div class="path-stage reveal">
+          <svg class="path-svg" viewBox="0 0 1100 220" preserveAspectRatio="none" aria-hidden="true">
+            <path id="methodPath" class="path-line" d="M70 58 C 170 58, 210 168, 290 168 S 430 58, 510 58 S 650 168, 730 168 S 870 58, 1030 58"/>
+            <circle class="path-spark" r="6">
+              <animateMotion dur="6s" repeatCount="indefinite">
+                <mpath href="#methodPath"/>
               </animateMotion>
             </circle>
           </svg>
-          <ol class="wire-steps">
+          <ol class="path-nodes">
             <li>
-              <span class="node" aria-hidden="true"></span>
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><path d="M9 7.5h10.2L23 11.2V24a1.5 1.5 0 0 1-1.5 1.5H9A1.5 1.5 0 0 1 7.5 24V9A1.5 1.5 0 0 1 9 7.5Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M18.2 7.7V12H23M11 16h8M11 20h5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              </span>
               <h3>Brief</h3>
               <p>The need, plainly.</p>
             </li>
             <li>
-              <span class="node" aria-hidden="true"></span>
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><rect x="7" y="8" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 13h18M12 6.8v4M20 6.8v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
               <h3>Scope</h3>
               <p>What finished means.</p>
             </li>
             <li>
-              <span class="node" aria-hidden="true"></span>
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><circle cx="14" cy="14" r="6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M18.6 18.6 24 24" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              </span>
               <h3>Work</h3>
               <p>Search, people, or the brief.</p>
             </li>
             <li>
-              <span class="node" aria-hidden="true"></span>
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 10.5v5.2l3.4 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
               <h3>Review</h3>
               <p>What the work showed.</p>
             </li>
             <li>
-              <span class="node" aria-hidden="true"></span>
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><circle cx="16" cy="11" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.4 23.4c1.1-3.4 3.6-5.1 7.6-5.1s6.5 1.7 7.6 5.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
               <h3>Stay</h3>
               <p>Or close the file.</p>
             </li>
           </ol>
+        </div>
+        <aside class="method-feed" aria-label="How the work moves">
+          <div class="toast-stack" id="step-notes"></div>
+        </aside>
         </div>
       </div>
     </section>
@@ -494,41 +540,41 @@
           <p class="kicker">Begin</p>
           <h2>Three ways.</h2>
         </div>
-        <div class="ways-flow">
-          <div class="ways-line" aria-hidden="true"><span class="ways-dash"></span><span class="ways-spark"></span><i></i><i></i><i></i></div>
-          <a class="way way-a reveal" href="#contact" data-select="Recruitment &amp; talent acquisition" style="--d:.04s">
-            <span class="way-step">01</span>
-            <span class="way-icon" aria-hidden="true">
-              <svg viewBox="0 0 32 32"><circle cx="14" cy="14" r="6" fill="none" stroke="#fff" stroke-width="2.3"/><path d="M18.6 18.6 24.2 24.2" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/></svg>
-            </span>
-            <span class="way-copy">
+        <div class="path-stage ways-path reveal">
+          <svg class="path-svg" viewBox="0 0 1100 220" preserveAspectRatio="none" aria-hidden="true">
+            <path id="waysPath" class="path-line" d="M120 58 C 260 58, 310 168, 430 168 S 620 58, 760 58 S 900 168, 980 168"/>
+            <circle class="path-spark maroon" r="6">
+              <animateMotion dur="5.6s" repeatCount="indefinite">
+                <mpath href="#waysPath"/>
+              </animateMotion>
+            </circle>
+          </svg>
+          <div class="path-nodes ways-nodes">
+            <a class="path-step" href="#contact" data-select="Recruitment &amp; talent acquisition">
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><circle cx="14" cy="14" r="6" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M18.6 18.6 24 24" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              </span>
               <h3>A search</h3>
               <p>One role. A short list.</p>
-            </span>
-            <span class="way-go">Begin →</span>
-          </a>
-          <a class="way way-b reveal" href="#contact" data-select="A retainer across these" style="--d:.1s">
-            <span class="way-step">02</span>
-            <span class="way-icon" aria-hidden="true">
-              <svg viewBox="0 0 32 32"><rect x="6" y="8" width="20" height="16" rx="3" fill="none" stroke="#fff" stroke-width="2"/><path d="M6 13h20M11 6.5v4M21 6.5v4" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
-            </span>
-            <span class="way-copy">
+            </a>
+            <a class="path-step" href="#contact" data-select="A retainer across these">
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><rect x="7" y="8" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 13h18M12 6.8v4M20 6.8v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
               <h3>A retainer</h3>
               <p>Hiring support, each month.</p>
-            </span>
-            <span class="way-go">Begin →</span>
-          </a>
-          <a class="way way-c reveal" href="#contact" data-select="Talent sourcing &amp; mapping" style="--d:.16s">
-            <span class="way-step">03</span>
-            <span class="way-icon" aria-hidden="true">
-              <svg viewBox="0 0 32 32"><circle cx="11" cy="12" r="3" fill="#fff"/><circle cx="21" cy="12.5" r="2.4" fill="#f7f5f2"/><path d="M5.5 23c.8-3 2.8-4.5 5.5-4.5s4.6 1.5 5.4 4.5M17.6 23c.4-2 1.6-3.2 3.2-3.5 1.4.2 2.5 1.1 3.1 3.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </span>
-            <span class="way-copy">
+            </a>
+            <a class="path-step" href="#contact" data-select="Talent sourcing &amp; mapping">
+              <span class="path-glow" aria-hidden="true"></span>
+              <span class="path-orb" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="21" cy="12.4" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6.6 23c.8-3 2.8-4.5 5.4-4.5s4.6 1.5 5.4 4.5M17.8 23c.4-2 1.6-3.2 3.2-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </span>
               <h3>A pipeline</h3>
               <p>Talent, before it is urgent.</p>
-            </span>
-            <span class="way-go">Begin →</span>
-          </a>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -641,7 +687,7 @@
           <a class="soc-in" href="https://www.linkedin.com/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-in"/></svg></a>
           <a class="soc-fb" href="https://www.facebook.com/" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-fb"/></svg></a>
           <a class="soc-ig" href="https://www.instagram.com/" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-ig"/></svg></a>
-          <a class="soc-wa" href="https://wa.me/" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-wa"/></svg></a>
+          <a class="soc-wa" href="https://wa.me/17868877796" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#logo-wa"/></svg></a>
           <a class="soc-mail" href="mailto:info@recruitexa.com" data-email-link aria-label="Email"><svg aria-hidden="true"><use href="#logo-mail"/></svg></a>
         </div>
         <a class="social-mail" href="mailto:info@recruitexa.com" data-email-link>info@recruitexa.com</a>
@@ -654,6 +700,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=14"></script>
+  <script src="main.js?v=23"></script>
 </body>
 </html>

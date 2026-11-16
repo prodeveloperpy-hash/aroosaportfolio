@@ -46,6 +46,114 @@
     intro.remove();
   }
 
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const stepNotes = document.getElementById("step-notes");
+  const methodSection = document.getElementById("method");
+  const startMethodFeed = () => {
+    if (!stepNotes || stepNotes.dataset.started === "1") return;
+    stepNotes.dataset.started = "1";
+    const steps = [
+      { tag: "Brief", text: "The need, written plainly." },
+      { tag: "Scope", text: "What finished means." },
+      { tag: "Work", text: "Search, people, or the brief." },
+      { tag: "Review", text: "What the work showed." },
+      { tag: "Stay", text: "Remain, or close the file." }
+    ];
+    steps.forEach((step, index) => {
+      window.setTimeout(() => {
+        const card = document.createElement("div");
+        card.className = "step-note";
+        card.innerHTML = `<strong>${step.tag}</strong><span>${step.text}</span>`;
+        stepNotes.appendChild(card);
+        window.setTimeout(() => {
+          card.classList.add("is-out");
+          window.setTimeout(() => card.remove(), 400);
+        }, 4200);
+      }, index * 1400);
+    });
+  };
+  if (stepNotes && methodSection && "IntersectionObserver" in window) {
+    const watch = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        startMethodFeed();
+        watch.disconnect();
+      }
+    }, { threshold: 0.28 });
+    watch.observe(methodSection);
+  } else if (stepNotes) {
+    startMethodFeed();
+  }
+
+  const pingStack = document.getElementById("ping-stack");
+  if (pingStack) {
+    const topics = [
+      { need: "HR for your business", select: "HR consulting & operations" },
+      { need: "recruitment", select: "Recruitment & talent acquisition" },
+      { need: "talent sourcing", select: "Talent sourcing & mapping" },
+      { need: "a CV or career page", select: "CV & career services" },
+      { need: "reverse recruiting", select: "Reverse recruiting" },
+      { need: "agency support", select: "Recruitment agency support" },
+      { need: "a hiring strategy", select: "Additional talent services" },
+      { need: "business development", select: "Business development & lead generation" }
+    ];
+    let index = 0;
+    const email = (document.body.dataset.email || "info@recruitexa.com").trim();
+    const pickService = (select) => {
+      const field = document.querySelector("#brief [name='service']");
+      if (field) field.value = select;
+    };
+    const closePing = (card) => {
+      card.classList.add("is-out");
+      window.setTimeout(() => card.remove(), 380);
+    };
+    const showConnect = (topic) => {
+      const card = document.createElement("article");
+      card.className = "ping";
+      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Marium</p><p>WhatsApp, or a note by email?</p><div class="ping-actions"><a href="https://wa.me/17868877796" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="ghost" href="#contact">Email</a></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
+      card.querySelector(".ghost").addEventListener("click", () => pickService(topic.select));
+      card.querySelector(".ping-x").addEventListener("click", () => closePing(card));
+      pingStack.appendChild(card);
+      while (pingStack.children.length > 3) {
+        pingStack.firstElementChild.classList.add("is-out");
+        window.setTimeout(() => pingStack.firstElementChild && pingStack.firstElementChild.remove(), 380);
+      }
+    };
+    const showAsk = () => {
+      if (index >= topics.length) {
+        if (!pingStack.children.length) pingStack.remove();
+        return;
+      }
+      const topic = topics[index];
+      index += 1;
+      const card = document.createElement("article");
+      card.className = "ping";
+      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Marium</p><p>I am Marium. You are finding ${topic.need}?</p><div class="ping-actions"><button type="button">Click here to connect</button></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
+      card.querySelector(".ping-actions button").addEventListener("click", () => {
+        pickService(topic.select);
+        closePing(card);
+        showConnect(topic);
+      });
+      card.querySelector(".ping-x").addEventListener("click", () => {
+        closePing(card);
+        window.setTimeout(showAsk, 700);
+      });
+      pingStack.appendChild(card);
+      while (pingStack.children.length > 3) {
+        const old = pingStack.firstElementChild;
+        old.classList.add("is-out");
+        window.setTimeout(() => old.remove(), 380);
+      }
+      window.setTimeout(() => {
+        if (card.isConnected && !card.classList.contains("is-out")) {
+          closePing(card);
+          showAsk();
+        }
+      }, 8000);
+    };
+    window.setTimeout(showAsk, 2000);
+  }
+
   const themeBtn = document.querySelector(".theme-toggle");
   const themeMeta = document.querySelector('meta[name="theme-color"]');
 
@@ -72,8 +180,6 @@
       applyTheme(next);
     });
   }
- 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const typed = document.getElementById("typed");
   if (typed) {
@@ -227,9 +333,37 @@
   if (showRoot) {
     const tabs = [...showRoot.querySelectorAll(".show-rail button")];
     const panes = [...showRoot.querySelectorAll(".show-pane")];
+    const progress = document.getElementById("service-progress");
     let cursor = 0;
-    let timer = 0;
+    let inView = false;
     let hold = false;
+
+    if (progress) {
+      progress.style.gridTemplateColumns = `repeat(${tabs.length}, minmax(0, 1fr))`;
+      progress.innerHTML = tabs.map(() => "<span><i></i></span>").join("");
+    }
+    const segs = progress ? [...progress.querySelectorAll("span")] : [];
+
+    function markProgress() {
+      segs.forEach((seg, i) => {
+        seg.classList.toggle("is-done", i < cursor);
+        seg.classList.toggle("is-on", i === cursor);
+        const bar = seg.querySelector("i");
+        if (!bar) return;
+        bar.style.animation = "none";
+        void bar.offsetWidth;
+        if (i === cursor && !reduceMotion) {
+          bar.style.animation = "";
+        } else if (i < cursor || (reduceMotion && i === cursor)) {
+          bar.style.transform = "scaleX(1)";
+        } else {
+          bar.style.transform = "scaleX(0)";
+        }
+      });
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle("is-next", i === (cursor + 1) % tabs.length);
+      });
+    }
 
     function showService(id, scroll) {
       const index = panes.findIndex((pane) => pane.id === id);
@@ -247,15 +381,24 @@
         tab.setAttribute("aria-selected", on ? "true" : "false");
         tab.tabIndex = on ? 0 : -1;
       });
+      markProgress();
       if (scroll) {
         document.getElementById("services").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
       }
     }
 
+    function pausePlay() {
+      showRoot.classList.toggle("is-paused", hold || !inView);
+    }
+
+    function nextService() {
+      if (hold || !inView) return;
+      cursor = (cursor + 1) % panes.length;
+      showService(panes[cursor].id, false);
+    }
+
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        hold = true;
-        window.clearInterval(timer);
         showService(tab.getAttribute("aria-controls"), false);
         history.replaceState(null, "", "#" + tab.getAttribute("aria-controls"));
       });
@@ -268,29 +411,47 @@
 
     window.addEventListener("hashchange", () => fromHash(true));
     fromHash(false);
+    markProgress();
 
     if (!reduceMotion) {
-      const tick = () => {
-        if (hold) return;
-        cursor = (cursor + 1) % panes.length;
-        showService(panes[cursor].id, false);
-      };
-      const play = () => {
-        window.clearInterval(timer);
-        if (hold || showRoot.matches(":hover")) return;
-        timer = window.setInterval(tick, 5200);
-      };
-      play();
+      segs.forEach((seg) => {
+        const bar = seg.querySelector("i");
+        if (!bar) return;
+        bar.addEventListener("animationend", (event) => {
+          if (event.animationName !== "showFill") return;
+          if (!seg.classList.contains("is-on")) return;
+          nextService();
+        });
+      });
+      if ("IntersectionObserver" in window) {
+        const watch = new IntersectionObserver(
+          (entries) => {
+            inView = entries.some((entry) => entry.isIntersecting);
+            pausePlay();
+          },
+          { threshold: 0.35 }
+        );
+        watch.observe(showRoot);
+      } else {
+        inView = true;
+      }
       showRoot.addEventListener("mouseenter", () => {
         hold = true;
-        window.clearInterval(timer);
+        pausePlay();
       });
       showRoot.addEventListener("mouseleave", () => {
         hold = false;
-        play();
+        pausePlay();
       });
-      showRoot.addEventListener("focusin", () => window.clearInterval(timer));
-      showRoot.addEventListener("focusout", play);
+      showRoot.addEventListener("focusin", () => {
+        hold = true;
+        pausePlay();
+      });
+      showRoot.addEventListener("focusout", () => {
+        hold = false;
+        pausePlay();
+      });
+      pausePlay();
     }
 
     if (!reduceMotion) {
@@ -334,14 +495,16 @@
     success.hidden = true;
   }
 
-  document.querySelectorAll("[data-select]").forEach((link) => {
+  function bindSelect(link) {
     link.addEventListener("click", () => {
       if (!form) return;
       if (form.hidden) resetForm();
       const select = form.querySelector("[name='service']");
       if (select) select.value = link.dataset.select;
     });
-  });
+  }
+
+  document.querySelectorAll("[data-select]").forEach(bindSelect);
 
   if (again) again.addEventListener("click", resetForm);
 
