@@ -235,11 +235,23 @@ function send_from_mailbox($to, $mailbox, $name, $replyTo, $subject, $body, $att
     $mailBody = $text;
   }
   $headers = implode("\r\n", $headerLines);
-  return @mail($to, encode_header($subject), $mailBody, $headers, '-f' . $mailbox);
+  $encodedSubject = encode_header($subject);
+  try {
+    if (@mail($to, $encodedSubject, $mailBody, $headers, '-f' . $mailbox)) {
+      return true;
+    }
+  } catch (Throwable $e) {
+    /* PHP 8 may reject the -f envelope parameter */
+  }
+  try {
+    return (bool) @mail($to, $encodedSubject, $mailBody, $headers);
+  } catch (Throwable $e) {
+    return false;
+  }
 }
 
 $attachment = null;
-$fileError = (int)($_FILES['cv']['error'] ?? UPLOAD_ERR_NO_FILE);
+$fileError = (int)(($_FILES['cv'] ?? [])['error'] ?? UPLOAD_ERR_NO_FILE);
 if ($fileError !== UPLOAD_ERR_NO_FILE) {
   $attachment = read_cv_attachment();
   if ($attachment === false) {
@@ -277,8 +289,12 @@ foreach ($recipients as $addr) {
   if ($host === $domain) {
     continue;
   }
-  if (send_from_mailbox($addr, $mailbox, $name, $replyTo, $subject, $body, $attachment)) {
-    $delivered++;
+  try {
+    if (send_from_mailbox($addr, $mailbox, $name, $replyTo, $subject, $body, $attachment)) {
+      $delivered++;
+    }
+  } catch (Throwable $e) {
+    /* keep delivering remaining inboxes */
   }
 }
 
