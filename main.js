@@ -611,7 +611,7 @@
       includes: [
         "End-to-end recruitment and permanent hiring.",
         "Technical, non-technical, executive, and specialist recruitment.",
-        "US federal contracting support (SAM.gov), sales, brokerage, finance, healthcare, and operations hiring.",
+        "<strong>US federal contracting support (SAM.gov), sales, brokerage, finance, healthcare, and operations hiring.</strong>",
         "Candidate sourcing, screening, shortlisting, and interview coordination.",
         "Offer management, hiring closure, and employee onboarding support."
       ],
@@ -735,7 +735,9 @@
       if (includes) {
         includes.replaceChildren(...item.includes.map((line) => {
           const li = document.createElement("li");
-          li.textContent = line;
+          const strong = line.startsWith("<strong>") && line.endsWith("</strong>");
+          li.textContent = strong ? line.replace(/<\/?strong>/g, "") : line;
+          if (strong) li.className = "svc-strong";
           return li;
         }));
       }
@@ -857,13 +859,20 @@
   }
 
   const industryAcc = document.getElementById("industry-acc");
+  const recordNote = document.getElementById("record-note");
   if (industryAcc) {
+    const paintIndustryNote = (item) => {
+      if (!recordNote || !item || !item.dataset.note) return;
+      recordNote.textContent = item.dataset.note;
+    };
     industryAcc.addEventListener("toggle", (event) => {
       const item = event.target;
       if (!(item instanceof HTMLDetailsElement) || !item.open) return;
       industryAcc.querySelectorAll("details.industry-item").forEach((other) => {
         if (other !== item) other.open = false;
       });
+      paintIndustryNote(item);
     }, true);
+    paintIndustryNote(industryAcc.querySelector("details.industry-item[open]"));
   }
 })();

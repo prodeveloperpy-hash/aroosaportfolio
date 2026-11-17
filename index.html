@@ -26,7 +26,7 @@
       document.documentElement.setAttribute("data-theme", "light");
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=92">
+  <link rel="stylesheet" href="styles.css?v=94">
 </head>
 <body data-email="info@recruitexa.com">
   <svg class="sprite" aria-hidden="true">
@@ -125,12 +125,12 @@
         <h1 class="hero-title" id="hero-title">Care in the Hiring.<br>Clarity in Every Career Move.</h1>
         <p class="hero-diff" id="hero-diff">Roles Filled. Careers Moved Forward.</p>
         <p class="hero-lead" id="hero-lead">Recruitexa helps startups, growing companies, and recruitment agencies hire technical and specialist talent, and build targeted B2B pipelines. You receive <strong>scored shortlists in 2 to 3 weeks</strong>, with a clear written scope before work begins.</p>
-        <div class="hero-actions">
-          <a class="btn btn-cyan" href="#contact">Book a Free 20-Minute Intro</a>
-          <a class="btn btn-ghost" href="#method">See How It Works</a>
-        </div>
         <p class="hero-trust">Remote and confidential. You work directly with me from first conversation to final delivery.</p>
         <p class="hero-caption"><span>Marium · Founder &amp; Principal Recruiter — Recruitexa</span></p>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-cyan" href="#contact">Book a Free 20-Minute Intro</a>
+        <a class="btn btn-ghost" href="#method">See How It Works</a>
       </div>
       <button class="hero-ctrl prev" type="button" id="hero-prev" aria-label="Previous slide">‹</button>
       <button class="hero-ctrl next" type="button" id="hero-next" aria-label="Next slide">›</button>
@@ -315,7 +315,7 @@
               <ul class="svc-list">
                 <li>End-to-end recruitment and permanent hiring</li>
                 <li>Technical, non-technical, executive, and specialist recruitment</li>
-                <li><strong>US federal contracting support (SAM.gov)</strong>, sales, brokerage, finance, healthcare, and operations</li>
+                <li class="svc-strong">US federal contracting support (SAM.gov), sales, brokerage, finance, healthcare, and operations</li>
                 <li>Sourcing, screening, shortlisting, interview coordination, offer, and onboarding support</li>
               </ul>
               <a class="btn btn-cyan svc-talk" href="#contact" data-select="Recruitment">Let’s talk</a>
@@ -406,22 +406,7 @@
           <h3 class="record-sub reveal">Industries &amp; roles we recruit for</h3>
           <p class="record-hint reveal">Open an industry to see the roles Recruitexa sources and hires. These are the desks we work against — not a dump of every title on the market.</p>
           <div class="industry-acc reveal" id="industry-acc">
-            <details class="industry-item" open>
-              <summary>Government Contracting &amp; US Federal (SAM.gov)</summary>
-              <div class="industry-body">
-                <p class="industry-label">Roles we source &amp; hire</p>
-                <ul>
-                  <li>Bid Associates</li>
-                  <li>Proposal Writers &amp; Coordinators</li>
-                  <li>Capture Managers</li>
-                  <li>Federal Business Development Managers</li>
-                  <li>Contract Specialists</li>
-                  <li>Compliance Officers</li>
-                  <li>SAM.gov Portal Administrators</li>
-                </ul>
-              </div>
-            </details>
-            <details class="industry-item">
+            <details class="industry-item" open data-note="Closed on the technology desk: full-stack, frontend, and backend engineers — sourcing, screening, and scored shortlists for software and IT seats.">
               <summary>Information Technology &amp; Software Development</summary>
               <div class="industry-body">
                 <p class="industry-label">Roles we source &amp; hire</p>
@@ -436,7 +421,22 @@
                 </ul>
               </div>
             </details>
-            <details class="industry-item">
+            <details class="industry-item" data-note="Closed on the SAM.gov desk: Bid Associate and Business Development Manager — LinkedIn sourcing, portal management, federal RFP/RFQ, and proposal coordination, handled end to end.">
+              <summary>Government Contracting &amp; US Federal (SAM.gov)</summary>
+              <div class="industry-body">
+                <p class="industry-label">Roles we source &amp; hire</p>
+                <ul>
+                  <li>Bid Associates</li>
+                  <li>Proposal Writers &amp; Coordinators</li>
+                  <li>Capture Managers</li>
+                  <li>Federal Business Development Managers</li>
+                  <li>Contract Specialists</li>
+                  <li>Compliance Officers</li>
+                  <li>SAM.gov Portal Administrators</li>
+                </ul>
+              </div>
+            </details>
+            <details class="industry-item" data-note="Closed on the sales and brokerage desk: SDRs, account executives, and business development managers — pipeline-ready talent for growth seats.">
               <summary>Sales, Brokerage &amp; Business Development</summary>
               <div class="industry-body">
                 <p class="industry-label">Roles we source &amp; hire</p>
@@ -451,7 +451,7 @@
                 </ul>
               </div>
             </details>
-            <details class="industry-item">
+            <details class="industry-item" data-note="Closed on the finance desk: accountants, bookkeepers, and financial analysts — vetted for accuracy and hands-on systems work.">
               <summary>Finance &amp; Accounting</summary>
               <div class="industry-body">
                 <p class="industry-label">Roles we source &amp; hire</p>
@@ -466,7 +466,7 @@
                 </ul>
               </div>
             </details>
-            <details class="industry-item">
+            <details class="industry-item" data-note="Closed on the healthcare desk: medical billing, RCM, and claims specialists — sourced for US healthcare operations.">
               <summary>Healthcare &amp; Medical Billing / RCM</summary>
               <div class="industry-body">
                 <p class="industry-label">Roles we source &amp; hire</p>
@@ -480,7 +480,7 @@
                 </ul>
               </div>
             </details>
-            <details class="industry-item">
+            <details class="industry-item" data-note="Closed on the marketing desk: performance marketers, SEO, and e-commerce managers — hired for revenue-facing seats.">
               <summary>Digital Marketing &amp; E-commerce</summary>
               <div class="industry-body">
                 <p class="industry-label">Roles we source &amp; hire</p>
@@ -494,7 +494,7 @@
                 </ul>
               </div>
             </details>
-            <details class="industry-item">
+            <details class="industry-item" data-note="Closed on the operations desk: EAs, VAs, and operations managers — placed for founders who need the function to run.">
               <summary>Administration &amp; Operations</summary>
               <div class="industry-body">
                 <p class="industry-label">Roles we source &amp; hire</p>
@@ -510,7 +510,7 @@
             </details>
           </div>
         </div>
-        <p class="record-note reveal">Closed on the SAM.gov desk: Bid Associate and Business Development Manager — LinkedIn sourcing, portal management, federal RFP/RFQ, and proposal coordination, handled end to end.</p>
+        <p class="record-note reveal" id="record-note">Closed on the technology desk: full-stack, frontend, and backend engineers — sourcing, screening, and scored shortlists for software and IT seats.</p>
       </div>
     </section>
 
@@ -690,7 +690,7 @@
               </article>
               <article>
                 <p class="fact-k">Response time</p>
-                <p class="fact-v">Within one business day</p>
+                <p class="fact-v">Monday to Friday<br>Within one business day</p>
               </article>
               <article>
                 <p class="fact-k">Language</p>
@@ -893,6 +893,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=34"></script>
+  <script src="main.js?v=36"></script>
 </body>
 </html>
