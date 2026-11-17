@@ -88,14 +88,11 @@
   const pingStack = document.getElementById("ping-stack");
   if (pingStack) {
     const topics = [
-      { need: "HR for your business", select: "HR consulting & operations" },
-      { need: "recruitment", select: "Recruitment & talent acquisition" },
-      { need: "talent sourcing", select: "Talent sourcing & mapping" },
-      { need: "a CV or career page", select: "CV & career services" },
-      { need: "reverse recruiting", select: "Reverse recruiting" },
-      { need: "agency support", select: "Recruitment agency support" },
-      { need: "a hiring strategy", select: "Additional talent services" },
-      { need: "business development", select: "Business development & lead generation" }
+      { need: "recruitment", select: "Recruitment" },
+      { need: "talent sourcing", select: "Talent Sourcing & Executive Search" },
+      { need: "B2B lead generation", select: "B2B Lead Generation" },
+      { need: "reverse recruitment", select: "Reverse Recruitment" },
+      { need: "CV formatting", select: "CV Formatting & Optimization" }
     ];
     let index = 0;
     const email = (document.body.dataset.email || "info@recruitexa.com").trim();
@@ -110,7 +107,7 @@
     const showConnect = (topic) => {
       const card = document.createElement("article");
       card.className = "ping";
-      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Marium</p><p>WhatsApp, or a note by email?</p><div class="ping-actions"><a href="https://wa.me/17868877796" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="ghost" href="#contact">Email</a></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
+      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Marium</p><p>Let’s talk on WhatsApp, or send a note.</p><div class="ping-actions"><a href="https://wa.me/17868877796" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="ghost" href="#contact">Email</a></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
       card.querySelector(".ghost").addEventListener("click", () => pickService(topic.select));
       card.querySelector(".ping-x").addEventListener("click", () => closePing(card));
       pingStack.appendChild(card);
@@ -128,7 +125,7 @@
       index += 1;
       const card = document.createElement("article");
       card.className = "ping";
-      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Marium</p><p>I am Marium. You are finding ${topic.need}?</p><div class="ping-actions"><button type="button">Click here to connect</button></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
+      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Need this desk?</p><p>Looking for ${topic.need}?</p><div class="ping-actions"><button type="button">Connect</button></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
       card.querySelector(".ping-actions button").addEventListener("click", () => {
         pickService(topic.select);
         closePing(card);
@@ -160,7 +157,7 @@
   function applyTheme(theme) {
     const dark = theme === "dark";
     document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-    if (themeMeta) themeMeta.setAttribute("content", dark ? "#071226" : "#123a8c");
+    if (themeMeta) themeMeta.setAttribute("content", dark ? "#0A1D3D" : "#0A1D3D");
     if (themeBtn) {
       themeBtn.setAttribute("aria-pressed", dark ? "true" : "false");
       themeBtn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
@@ -179,6 +176,101 @@
       }
       applyTheme(next);
     });
+  }
+
+  const heroBg = document.getElementById("hero-bg");
+  const heroTitle = document.getElementById("hero-title");
+  if (heroBg && heroTitle) {
+    const slides = [
+      {
+        kicker: "Hands-on recruitment, talent sourcing & B2B pipeline support",
+        title: "Care in the Hiring.<br>Clarity in Every Career Move.",
+        lead: "Recruitexa helps startups, growing companies, and recruitment agencies hire technical and specialist talent, and build targeted B2B pipelines. You receive <strong>scored shortlists in 2 to 3 weeks</strong>, with a clear written scope before work begins.",
+        diff: "Roles Filled. Careers Moved Forward."
+      },
+      {
+        kicker: "Recruitment for founders & companies",
+        title: "From a clear brief<br>to the person who starts.",
+        lead: "End-to-end recruitment for technical, specialist, and US federal contracting roles. I source, screen, and present <strong>scored shortlists in 2 to 3 weeks</strong>.",
+        diff: "A written scope before the search begins."
+      },
+      {
+        kicker: "Talent sourcing & executive search",
+        title: "Senior talent,<br>beyond the job boards.",
+        lead: "I reach passive candidates through <strong>LinkedIn Recruiter, advanced Boolean, and Google X-ray search</strong> — then deliver qualified shortlists, including white-label support for recruitment agencies.",
+        diff: "Mapped, approached, and ready to review."
+      },
+      {
+        kicker: "B2B lead generation",
+        title: "Verified decision-makers.<br>Lists you can work.",
+        lead: "Ideal Customer Profile research, verified contacts, and CRM-ready prospect lists for agencies, founders, and sales teams — built to open real conversations.",
+        diff: "Qualified names. A pipeline you can open."
+      },
+      {
+        kicker: "Reverse recruitment",
+        title: "Your next role,<br>searched with care.",
+        lead: "I manage target-company research, applications, and recruiter outreach on your behalf — with <strong>10+ placements across the US and UAE</strong>.",
+        diff: "You approve. I run the search."
+      },
+      {
+        kicker: "CV formatting & optimization",
+        title: "A resume recruiters<br>can read at a glance.",
+        lead: "ATS-conscious structure, keyword alignment, and clean presentation — delivered in Word, Google Docs, and PDF within <strong>3 to 5 business days</strong>.",
+        diff: "Clear, structured, and send-ready."
+      }
+    ];
+    const images = [...heroBg.querySelectorAll("img")];
+    const kicker = document.getElementById("hero-kicker");
+    const lead = document.getElementById("hero-lead");
+    const diff = document.getElementById("hero-diff");
+    const copy = document.querySelector(".hero-copy");
+    const dots = document.getElementById("hero-dots");
+    let at = 0;
+    let timer = 0;
+    let fadeTimer = 0;
+    let firstPaint = true;
+    if (dots) {
+      dots.innerHTML = slides.map((_, i) => `<button type="button" aria-label="Slide ${i + 1}"></button>`).join("");
+    }
+    const writeCopy = () => {
+      const slide = slides[at];
+      if (kicker) kicker.textContent = slide.kicker;
+      heroTitle.innerHTML = slide.title;
+      if (lead) lead.innerHTML = slide.lead;
+      if (diff) diff.textContent = slide.diff;
+      if (copy) copy.classList.remove("is-out");
+    };
+    const paint = (i) => {
+      at = (i + slides.length) % slides.length;
+      images.forEach((img, n) => img.classList.toggle("is-on", n === at));
+      if (dots) {
+        [...dots.children].forEach((dot, n) => dot.classList.toggle("is-on", n === at));
+      }
+      window.clearTimeout(fadeTimer);
+      if (firstPaint || reduceMotion || !copy) {
+        firstPaint = false;
+        writeCopy();
+        return;
+      }
+      copy.classList.add("is-out");
+      fadeTimer = window.setTimeout(writeCopy, 480);
+    };
+    const play = () => {
+      window.clearInterval(timer);
+      if (reduceMotion) return;
+      timer = window.setInterval(() => paint(at + 1), 7600);
+    };
+    paint(0);
+    play();
+    const prev = document.getElementById("hero-prev");
+    const next = document.getElementById("hero-next");
+    if (prev) prev.addEventListener("click", () => { paint(at - 1); play(); });
+    if (next) next.addEventListener("click", () => { paint(at + 1); play(); });
+    if (dots) {
+      [...dots.children].forEach((dot, i) => {
+        dot.addEventListener("click", () => { paint(i); play(); });
+      });
+    }
   }
 
   const typed = document.getElementById("typed");
@@ -306,10 +398,6 @@
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") closeMenu();
     });
-
-    window.addEventListener("resize", () => {
-      if (window.innerWidth > 920) closeMenu();
-    });
   }
 
   const revealNodes = document.querySelectorAll(".reveal");
@@ -330,7 +418,7 @@
   }
 
   const showRoot = document.getElementById("service-show");
-  if (showRoot) {
+  if (showRoot && showRoot.querySelector(".show-pane")) {
     const tabs = [...showRoot.querySelectorAll(".show-rail button")];
     const panes = [...showRoot.querySelectorAll(".show-pane")];
     const progress = document.getElementById("service-progress");
@@ -497,14 +585,209 @@
 
   function bindSelect(link) {
     link.addEventListener("click", () => {
+      const value = link.dataset.select;
+      try {
+        sessionStorage.setItem("aroosa-select", value);
+      } catch (err) {
+        /* storage may be blocked */
+      }
       if (!form) return;
       if (form.hidden) resetForm();
       const select = form.querySelector("[name='service']");
-      if (select) select.value = link.dataset.select;
+      if (select) select.value = value;
     });
   }
 
   document.querySelectorAll("[data-select]").forEach(bindSelect);
+
+  const catalog = {
+    recruitment: {
+      title: "Recruitment",
+      select: "Recruitment",
+      img: "assets/pro-handshake.jpg",
+      alt: "A hiring conversation sealed across the table.",
+      lead: "From the brief to the person who starts.",
+      who: "For founders and companies who need end-to-end recruitment and permanent hiring — technical, non-technical, executive, and specialist seats, including US federal contracting (SAM.gov).",
+      includes: [
+        "End-to-end recruitment and permanent hiring.",
+        "Technical, non-technical, executive, and specialist recruitment.",
+        "US federal contracting support (SAM.gov), sales, brokerage, finance, healthcare, and operations hiring.",
+        "Candidate sourcing, screening, shortlisting, and interview coordination.",
+        "Offer management, hiring closure, and employee onboarding support."
+      ],
+      how: [
+        "You share the role, budget, and timeline. We agree a written scope before work begins.",
+        "I personally source, screen, and score 3 to 5 candidates with interview notes.",
+        "We review the shortlist together. Eligible placements include a 30-day replacement warranty."
+      ],
+      receive: "A scored shortlist of 3 to 5 vetted candidates in 2 to 3 weeks, with interview notes and a structured scorecard."
+    },
+    "talent-sourcing": {
+      title: "Talent Sourcing & Executive Search",
+      select: "Talent Sourcing & Executive Search",
+      img: "assets/pro-sourcing.jpg",
+      alt: "A recruiter sourcing names at a bright desk.",
+      lead: "Reaching top passive talent who are not on job boards.",
+      who: "For teams and recruitment agencies that need executive search, leadership headhunting, and white-label sourcing for hard-to-fill senior roles.",
+      includes: [
+        "Executive search and leadership headhunting for hard-to-fill senior roles.",
+        "LinkedIn Recruiter, advanced Boolean, and Google X-ray search.",
+        "Competitor talent mapping, target-company research, and market benchmarking.",
+        "Passive candidate outreach, identification, and initial screening.",
+        "Qualified candidate shortlists and white-label sourcing support for recruitment agencies."
+      ],
+      how: [
+        "You name the seat, market, and how the shortlist should be delivered.",
+        "I run the sourcing sprint with regular progress updates — never silence.",
+        "You receive a qualified shortlist you can work, under your brand if that is the agreed scope."
+      ],
+      receive: "Qualified shortlists, talent maps, and white-label sourcing as defined in the written scope."
+    },
+    "lead-generation": {
+      title: "B2B Lead Generation",
+      select: "B2B Lead Generation",
+      img: "assets/pro-bd.jpg",
+      alt: "A professional building a B2B pipeline.",
+      lead: "Targeted decision-maker lists and outbound pipelines that open real conversations.",
+      who: "For agencies, founders, and sales teams who need ICP research, verified contacts, and CRM-ready prospect lists.",
+      includes: [
+        "Ideal Customer Profile (ICP) and target-company research.",
+        "Decision-maker identification and verified B2B contact list building (LinkedIn Sales Navigator, emails, and company intelligence).",
+        "Lead qualification, industry research, and CRM-ready prospect lists.",
+        "Recruitment client acquisition lists for staffing and search agencies.",
+        "Sales pipeline building and outreach support where included in the agreed project scope."
+      ],
+      how: [
+        "We agree your ICP, geography, and volume in writing.",
+        "I research companies, identify decision-makers, and qualify each record.",
+        "You receive a CRM-ready list — typically within 5 to 10 business days."
+      ],
+      receive: "Verified B2B contact lists qualified against your ICP. Meetings are not guaranteed; the work is a pipeline you can open."
+    },
+    "reverse-recruiting": {
+      title: "Reverse Recruitment",
+      select: "Reverse Recruitment",
+      img: "assets/pro-interview.jpg",
+      alt: "A private conversation about the next role.",
+      lead: "I run the job search on your behalf — backed by 10+ placements in the US and UAE.",
+      who: "For job seekers and professionals targeting US, UAE, UK, or global remote roles who want the search run with candidate approval at every step.",
+      includes: [
+        "CV and LinkedIn profile optimization.",
+        "Target-company research and relevant job identification.",
+        "Targeted job applications submitted with candidate approval.",
+        "Direct recruiter and hiring manager outreach.",
+        "Application tracking, follow-ups, and interview coordination support."
+      ],
+      how: [
+        "You set the target roles, markets, and what must stay private.",
+        "I research, apply with your approval, and reach hiring managers.",
+        "You take the interviews. I stay on tracking, follow-ups, and coordination."
+      ],
+      receive: "A managed search file: applications, outreach, tracking, and interview support. Offers are never guaranteed."
+    },
+    "cv-career": {
+      title: "CV Formatting & Optimization",
+      select: "CV Formatting & Optimization",
+      img: "assets/pro-desk.jpg",
+      alt: "CVs and a notebook ready on a working desk.",
+      lead: "Clean, ATS-conscious resumes structured for clarity and recruiter review.",
+      who: "For global applicants who need a professional CV structured for ATS systems and recruiter review.",
+      includes: [
+        "Professional CV formatting and ATS-conscious structure.",
+        "CV restructuring, keyword alignment, and improved visual presentation.",
+        "Word, Google Docs, and PDF delivery.",
+        "Cover letter formatting where required (delivered in 3 to 5 business days)."
+      ],
+      how: [
+        "You send the current CV, target roles, and any must-keep facts.",
+        "I restructure, align keywords, and return a clean draft.",
+        "Final files arrive in Word, Google Docs, and PDF within 3 to 5 business days."
+      ],
+      receive: "Formatted CV files as agreed. Placement is a separate Reverse Recruitment or search engagement."
+    }
+  };
+
+  const servicePage = document.getElementById("service-page");
+  if (servicePage) {
+    const id = new URLSearchParams(location.search).get("id") || "";
+    const item = catalog[id];
+    if (!item) {
+      location.replace("index.html#services");
+    } else {
+      const photo = document.getElementById("svc-photo");
+      const title = document.getElementById("svc-title");
+      const lead = document.getElementById("svc-lead");
+      const who = document.getElementById("svc-who");
+      const includes = document.getElementById("svc-includes");
+      const how = document.getElementById("svc-how");
+      const receive = document.getElementById("svc-receive");
+      const note = document.getElementById("svc-note");
+      const others = document.getElementById("svc-others");
+      const talk = document.getElementById("svc-talk");
+      if (photo) {
+        photo.src = item.img;
+        photo.alt = item.alt;
+      }
+      if (title) title.textContent = item.title;
+      document.title = item.title + " | Recruitexa";
+      if (lead) lead.textContent = item.lead;
+      if (who) who.textContent = item.who;
+      if (includes) {
+        includes.replaceChildren(...item.includes.map((line) => {
+          const li = document.createElement("li");
+          li.textContent = line;
+          return li;
+        }));
+      }
+      if (how) {
+        how.replaceChildren(...item.how.map((line) => {
+          const li = document.createElement("li");
+          li.textContent = line;
+          return li;
+        }));
+      }
+      if (receive) receive.textContent = item.receive;
+      if (note && item.note) {
+        note.hidden = false;
+        note.textContent = item.note;
+      }
+      if (talk) {
+        talk.dataset.select = item.select;
+        bindSelect(talk);
+      }
+      if (others) {
+        others.replaceChildren(...Object.entries(catalog).filter(([key]) => key !== id).map(([key, svc]) => {
+          const link = document.createElement("a");
+          link.href = `service.html?id=${key}`;
+          link.textContent = svc.title;
+          return link;
+        }));
+      }
+      const select = form && form.querySelector("[name='service']");
+      if (select) select.value = item.select;
+      try {
+        sessionStorage.setItem("aroosa-select", item.select);
+      } catch (err) {
+        /* storage may be blocked */
+      }
+    }
+  }
+
+  const storedSelect = (() => {
+    const fromQuery = new URLSearchParams(location.search).get("select");
+    if (fromQuery) return fromQuery;
+    try {
+      return sessionStorage.getItem("aroosa-select");
+    } catch (err) {
+      return "";
+    }
+  })();
+  if (form && storedSelect) {
+    const select = form.querySelector("[name='service']");
+    if (select && [...select.options].some((opt) => opt.value === storedSelect)) {
+      select.value = storedSelect;
+    }
+  }
 
   if (again) again.addEventListener("click", resetForm);
 
@@ -571,5 +854,16 @@
       success.hidden = false;
       success.focus();
     });
+  }
+
+  const industryAcc = document.getElementById("industry-acc");
+  if (industryAcc) {
+    industryAcc.addEventListener("toggle", (event) => {
+      const item = event.target;
+      if (!(item instanceof HTMLDetailsElement) || !item.open) return;
+      industryAcc.querySelectorAll("details.industry-item").forEach((other) => {
+        if (other !== item) other.open = false;
+      });
+    }, true);
   }
 })();

@@ -1,0 +1,12 @@
+<?php
+// Copy this file to mail-config.php on the server (cPanel File Manager).
+// Use the same password as the info@recruitexa.com mailbox.
+// Do not put the real password in Git.
+
+return [
+  'host' => '127.0.0.1',
+  'user' => 'info@recruitexa.com',
+  'pass' => 'YOUR_MAILBOX_PASSWORD',
+  // Leave this out to auto-detect every cPanel mailbox on recruitexa.com.
+  // 'to' => ['info@recruitexa.com', 'hello@recruitexa.com'],
+];
