@@ -107,7 +107,7 @@
     const showConnect = (topic) => {
       const card = document.createElement("article");
       card.className = "ping";
-      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Marium</p><p>Let’s talk on WhatsApp, or send a note.</p><div class="ping-actions"><a href="https://wa.me/17868877796" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="ghost" href="#contact">Email</a></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
+      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg?v=p3" alt=""><div><p class="ping-who">Marium</p><p>Let’s talk on WhatsApp, or send a note.</p><div class="ping-actions"><a href="https://wa.me/17868877796" target="_blank" rel="noopener noreferrer">WhatsApp</a><a class="ghost" href="#contact">Email</a></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
       card.querySelector(".ghost").addEventListener("click", () => pickService(topic.select));
       card.querySelector(".ping-x").addEventListener("click", () => closePing(card));
       pingStack.appendChild(card);
@@ -125,7 +125,7 @@
       index += 1;
       const card = document.createElement("article");
       card.className = "ping";
-      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg" alt=""><div><p class="ping-who">Need this desk?</p><p>Looking for ${topic.need}?</p><div class="ping-actions"><button type="button">Connect</button></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
+      card.innerHTML = `<img class="ping-face" src="assets/real-portrait.jpg?v=p3" alt=""><div><p class="ping-who">Need this desk?</p><p>Looking for ${topic.need}?</p><div class="ping-actions"><button type="button">Connect</button></div></div><button class="ping-x" type="button" aria-label="Close">×</button>`;
       card.querySelector(".ping-actions button").addEventListener("click", () => {
         pickService(topic.select);
         closePing(card);
