@@ -5936,3 +5936,172 @@ html, body { background: #F7F5F0; color: #0A1D3D; }
   }
   .career-path-media { height: 10rem; }
 }
+
+/* Mobile: stop overlays, overlap, and sideways scroll */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.hero-bg {
+  overflow: hidden;
+}
+
+@media (max-width: 1099px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: auto;
+    height: auto;
+  }
+
+  .hero-copy {
+    width: 100%;
+    max-width: none;
+    padding: calc(var(--nav) + 1.15rem) 1.15rem 0.4rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.65rem, 8vw, 2.4rem);
+    line-height: 1.15;
+  }
+
+  .hero-lead,
+  .hero-trust,
+  .hero-caption {
+    max-width: none;
+  }
+
+  .hero-actions {
+    position: relative;
+    inset: auto;
+    transform: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.8rem 1.15rem 0.35rem;
+    pointer-events: auto;
+  }
+
+  .hero-actions a {
+    width: 100%;
+    max-width: none;
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .hero-ctrl {
+    display: none;
+  }
+
+  .hero-dots {
+    position: relative;
+    bottom: auto;
+    padding: 0.55rem 0 1.2rem;
+  }
+
+  .trust-bar {
+    margin-top: 0.9rem;
+  }
+}
+
+@media (max-width: 860px) {
+  .nav-panel a {
+    font-size: clamp(1.2rem, 6.4vw, 1.8rem);
+    line-height: 1.25;
+  }
+
+  .nav-panel-inner {
+    justify-content: flex-start;
+    gap: 0.35rem;
+    padding: 1.2rem var(--pad) 2rem;
+  }
+
+  .marquee {
+    margin-inline: 0.85rem;
+  }
+
+  .service-hero,
+  .career-hero {
+    min-height: 0;
+  }
+
+  .service-hero-copy,
+  .career-hero-copy {
+    padding: calc(var(--nav) + 1.35rem) 0 2rem;
+    max-width: none;
+  }
+
+  .career-hero-copy h1,
+  .service-hero-copy h1 {
+    font-size: clamp(1.8rem, 8.5vw, 2.55rem);
+    line-height: 1.12;
+  }
+
+  .career-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .career-hero-actions .btn,
+  .career-mail-chip {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .footer-grid,
+  .footer-top {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  :root { --pad: 1.05rem; }
+
+  .hero-bg img:nth-child(1) { object-position: 60% 16%; }
+
+  .hero-caption span {
+    font-size: 0.72rem;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .btn,
+  .btn-cyan,
+  .btn-ghost,
+  .nav-mail {
+    white-space: normal;
+    text-align: center;
+  }
+
+  .industry-item summary {
+    font-size: 0.92rem;
+    padding-right: 3.2rem;
+  }
+
+  .contact-panel {
+    padding: 1.15rem 1rem 1.3rem;
+  }
+
+  .contact .field input,
+  .contact .field select,
+  .contact .field textarea {
+    max-width: 100%;
+  }
+
+  .lux-track img {
+    width: 168px;
+    height: 96px;
+  }
+
+  .section,
+  .services {
+    padding-top: 3.2rem;
+    padding-bottom: 3.2rem;
+  }
+}
