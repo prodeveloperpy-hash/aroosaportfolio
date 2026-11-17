@@ -209,7 +209,7 @@
       {
         kicker: "Reverse recruitment",
         title: "Your next role,<br>searched with care.",
-        lead: "I manage target-company research, applications, and recruiter outreach on your behalf — with <strong>10+ placements across the US and UAE</strong>.",
+        lead: "I manage target-company research, applications, and recruiter outreach on your behalf — with <strong>25+ placements across the US and UAE</strong>.",
         diff: "You approve. I run the search."
       },
       {
@@ -669,7 +669,7 @@
       select: "Reverse Recruitment",
       img: "assets/pro-interview.jpg",
       alt: "A private conversation about the next role.",
-      lead: "I run the job search on your behalf — backed by 10+ placements in the US and UAE.",
+      lead: "I run the job search on your behalf — backed by 25+ placements in the US and UAE.",
       who: "For job seekers and professionals targeting US, UAE, UK, or global remote roles who want the search run with candidate approval at every step.",
       includes: [
         "CV and LinkedIn profile optimization.",
