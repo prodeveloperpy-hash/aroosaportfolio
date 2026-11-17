@@ -6106,68 +6106,29 @@ body {
   }
 }
 
-/* Hero red card + drop frosted-glass cards */
-.hero-copy {
-  margin-top: calc(var(--nav) + 2.6rem);
-  margin-bottom: 5rem;
-  padding: 1.5rem 1.65rem 1.6rem;
-  width: min(38rem, calc(100% - 7.5rem));
-  max-width: 38rem;
-  background: #6B1629;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 22px;
-  box-shadow: 0 28px 64px rgba(10, 29, 61, 0.34);
+.hero-copy .hero-book {
+  margin-top: 1.15rem;
 }
 
-.hero-title { text-shadow: none; }
+@media (min-width: 1100px) {
+  .hero-actions {
+    position: static;
+    inset: auto;
+    transform: none;
+    justify-content: center;
+    padding: 0;
+    pointer-events: auto;
+  }
 
-.hero .kicker,
-.hero-diff { color: #F7F5F0; }
-
-.hero-caption span {
-  background: #0A1D3D;
-  border: 0;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.hero .btn-ghost {
-  background: #FFFFFF;
-  border: 0;
-  color: #0A1D3D;
-}
-
-.hero .btn-ghost:hover {
-  background: #F7F5F0;
-  color: #6B1629;
-}
-
-.ping,
-.theme-toggle,
-.contact-panel,
-.contact-panel form,
-.form-success,
-.career-mail-chip {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.contact-panel,
-.contact-panel form,
-.form-success {
-  background: #FFFFFF;
-}
-
-.career-mail-chip {
-  background: #6B1629;
-  border: 0;
+  .hero-actions a {
+    max-width: none;
+  }
 }
 
 @media (max-width: 1099px) {
-  .hero-copy {
-    width: calc(100% - 1.6rem);
-    max-width: none;
-    margin: calc(var(--nav) + 0.85rem) 0.8rem 0.45rem;
-    padding: 1.15rem 1.05rem 1.2rem;
+  .hero-copy .hero-book {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 }
