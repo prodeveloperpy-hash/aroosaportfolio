@@ -4732,6 +4732,38 @@ html, body { background: #F7F5F0; color: #0A1D3D; }
   box-shadow: 0 12px 28px rgba(10, 29, 61, 0.04);
 }
 
+.process-portals {
+  margin-top: 1.2rem;
+}
+
+.process-portals .kicker { margin: 0 0 0.35rem; }
+
+.process-lead {
+  margin: 0 0 0.75rem;
+  color: #5c6570;
+  font-size: 0.9rem;
+}
+
+.process-portals ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.process-portals li {
+  margin: 0;
+  padding: 0.42rem 0.8rem;
+  border-radius: 999px;
+  background: #FFFFFF;
+  border: 1px solid rgba(10, 29, 61, 0.08);
+  color: #0A1D3D;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .record-intro {
     grid-template-columns: 1fr;

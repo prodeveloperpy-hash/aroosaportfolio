@@ -860,19 +860,26 @@
 
   const industryAcc = document.getElementById("industry-acc");
   const recordNote = document.getElementById("record-note");
-  if (industryAcc) {
-    const paintIndustryNote = (item) => {
-      if (!recordNote || !item || !item.dataset.note) return;
-      recordNote.textContent = item.dataset.note;
+  if (industryAcc && recordNote) {
+    const items = [...industryAcc.querySelectorAll("details.industry-item")];
+    const defaultNote = recordNote.getAttribute("data-default") || recordNote.textContent;
+    const syncIndustryNote = () => {
+      const open = items.find((item) => item.open);
+      recordNote.textContent = (open && open.getAttribute("data-note")) || defaultNote;
     };
-    industryAcc.addEventListener("toggle", (event) => {
-      const item = event.target;
-      if (!(item instanceof HTMLDetailsElement) || !item.open) return;
-      industryAcc.querySelectorAll("details.industry-item").forEach((other) => {
-        if (other !== item) other.open = false;
+    items.forEach((item) => {
+      const summary = item.querySelector("summary");
+      if (!summary) return;
+      summary.addEventListener("click", (event) => {
+        event.preventDefault();
+        const willOpen = !item.open;
+        items.forEach((other) => {
+          other.open = false;
+        });
+        item.open = willOpen;
+        syncIndustryNote();
       });
-      paintIndustryNote(item);
-    }, true);
-    paintIndustryNote(industryAcc.querySelector("details.industry-item[open]"));
+    });
+    syncIndustryNote();
   }
 })();
