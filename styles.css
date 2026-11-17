@@ -5413,15 +5413,6 @@ html, body { background: #F7F5F0; color: #0A1D3D; }
   line-height: 1.65;
 }
 
-.step-who {
-  margin: 0 0 0.35rem;
-  color: #6B1629;
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .steps li:hover {
   transform: translateY(-8px);
   box-shadow: 0 26px 46px rgba(0, 0, 0, 0.28);
@@ -5704,4 +5695,80 @@ html, body { background: #F7F5F0; color: #0A1D3D; }
 
 @media (max-width: 900px) {
   .engage-table { grid-template-columns: 1fr; }
+}
+
+.career-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(16rem, 0.8fr);
+  gap: 2rem;
+  align-items: start;
+  margin-bottom: 2.4rem;
+}
+
+.career-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.career-points li {
+  padding: 1rem 1.1rem;
+  background: #FFFFFF;
+  border: 1px solid rgba(10, 29, 61, 0.08);
+  border-radius: 16px;
+  color: #5c6570;
+  line-height: 1.55;
+}
+
+.career-points strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: #0A1D3D;
+  font-weight: 700;
+}
+
+.career-paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.15rem;
+}
+
+.career-path {
+  padding: 1.4rem 1.3rem 1.3rem;
+  background: #FFFFFF;
+  border: 1px solid rgba(10, 29, 61, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 16px 36px rgba(10, 29, 61, 0.06);
+}
+
+.career-path h3 {
+  margin: 0.25rem 0 0.55rem;
+  color: #0A1D3D;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.career-path p {
+  color: #5c6570;
+  line-height: 1.65;
+}
+
+.career-path .btn { margin-top: 1rem; }
+
+.career-path .btn-ghost {
+  border-color: rgba(10, 29, 61, 0.22);
+  color: #0A1D3D;
+}
+
+.contact .field input[type="file"] {
+  padding: 0.7rem 0.85rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 860px) {
+  .career-intro,
+  .career-paths { grid-template-columns: 1fr; }
 }

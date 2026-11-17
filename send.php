@@ -39,8 +39,10 @@ if (strlen($name) < 2 || !filter_var($replyTo, FILTER_VALIDATE_EMAIL) || strlen(
 }
 
 $domain = 'recruitexa.com';
-$mailbox = 'info@' . $domain;
-$subject = 'Recruitexa brief — ' . $service;
+$intent = strtolower(clean_line($_POST['intent'] ?? '', 40));
+$isCareer = $intent === 'career';
+$mailbox = ($isCareer ? 'careers' : 'info') . '@' . $domain;
+$subject = ($isCareer ? 'Recruitexa career — ' : 'Recruitexa brief — ') . $service;
 $body = "Name: {$name}\n"
   . "Company / LinkedIn: " . ($company !== '' ? $company : '-') . "\n"
   . "Email: {$replyTo}\n"
@@ -110,7 +112,36 @@ function discover_mailboxes($domain, $fallback) {
   return array_slice(array_values(array_unique($boxes)), 0, 40);
 }
 
-function rfc822_message($to, $mailbox, $name, $replyTo, $subject, $body) {
+function read_cv_attachment() {
+  if (empty($_FILES['cv']) || !is_uploaded_file((string)($_FILES['cv']['tmp_name'] ?? ''))) {
+    return null;
+  }
+  if ((int)$_FILES['cv']['error'] !== UPLOAD_ERR_OK) {
+    return false;
+  }
+  if ((int)$_FILES['cv']['size'] > 4 * 1024 * 1024) {
+    return false;
+  }
+  $rawName = (string)$_FILES['cv']['name'];
+  $ext = strtolower((string)pathinfo($rawName, PATHINFO_EXTENSION));
+  $mimes = [
+    'pdf' => 'application/pdf',
+    'doc' => 'application/msword',
+    'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  ];
+  if (!isset($mimes[$ext])) {
+    return false;
+  }
+  $bytes = file_get_contents($_FILES['cv']['tmp_name']);
+  if ($bytes === false) {
+    return false;
+  }
+  $safe = preg_replace('/[^A-Za-z0-9._-]+/', '-', $rawName);
+  $safe = $safe !== '' ? $safe : ('cv.' . $ext);
+  return ['name' => $safe, 'mime' => $mimes[$ext], 'data' => $bytes];
+}
+
+function rfc822_message($to, $mailbox, $name, $replyTo, $subject, $body, $attachment = null) {
   $host = preg_replace('/[^A-Za-z0-9.-]/', '', gethostname() ?: 'recruitexa.com');
   $messageId = '<' . bin2hex(random_bytes(8)) . '@' . $host . '>';
   $headers = [
@@ -123,14 +154,30 @@ function rfc822_message($to, $mailbox, $name, $replyTo, $subject, $body) {
     'Subject: ' . encode_header($subject),
     'Message-ID: ' . $messageId,
     'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
     'X-Mailer: Recruitexa',
   ];
-  return implode("\r\n", $headers) . "\r\n\r\n" . str_replace("\n", "\r\n", $body);
+  $text = str_replace("\n", "\r\n", $body);
+  if (is_array($attachment) && isset($attachment['data'])) {
+    $boundary = 'rx' . bin2hex(random_bytes(12));
+    $headers[] = 'Content-Type: multipart/mixed; boundary="' . $boundary . '"';
+    $part = '--' . $boundary . "\r\n"
+      . "Content-Type: text/plain; charset=UTF-8\r\n"
+      . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+      . $text . "\r\n\r\n"
+      . '--' . $boundary . "\r\n"
+      . 'Content-Type: ' . $attachment['mime'] . '; name="' . $attachment['name'] . '"' . "\r\n"
+      . 'Content-Disposition: attachment; filename="' . $attachment['name'] . '"' . "\r\n"
+      . "Content-Transfer-Encoding: base64\r\n\r\n"
+      . chunk_split(base64_encode($attachment['data']))
+      . '--' . $boundary . "--\r\n";
+    return implode("\r\n", $headers) . "\r\n\r\n" . $part;
+  }
+  $headers[] = 'Content-Type: text/plain; charset=UTF-8';
+  $headers[] = 'Content-Transfer-Encoding: 8bit';
+  return implode("\r\n", $headers) . "\r\n\r\n" . $text;
 }
 
-function deliver_maildir($to, $mailbox, $name, $replyTo, $subject, $body) {
+function deliver_maildir($to, $mailbox, $name, $replyTo, $subject, $body, $attachment = null) {
   $home = account_home();
   $local = strtolower((string)strstr($to, '@', true));
   $domain = strtolower((string)substr(strrchr($to, '@') ?: '', 1));
@@ -143,7 +190,7 @@ function deliver_maildir($to, $mailbox, $name, $replyTo, $subject, $body) {
   if (!is_dir($newDir)) {
     return false;
   }
-  $raw = rfc822_message($to, $mailbox, $name, $replyTo, $subject, $body);
+  $raw = rfc822_message($to, $mailbox, $name, $replyTo, $subject, $body, $attachment);
   $host = preg_replace('/[^A-Za-z0-9.-]/', '', gethostname() ?: 'host');
   $fname = sprintf('%d.M%dP%d.%s', time(), (int) (microtime(true) * 1000000), getmypid(), $host);
   $target = $newDir . '/' . $fname;
@@ -175,7 +222,21 @@ function send_from_mailbox($to, $mailbox, $name, $replyTo, $subject, $body) {
   return @mail($to, $encodedSubject, $mailBody, $headers, '-f' . $mailbox);
 }
 
-$recipients = $config['to'] ?? discover_mailboxes($domain, $mailbox);
+$attachment = null;
+$fileError = (int)($_FILES['cv']['error'] ?? UPLOAD_ERR_NO_FILE);
+if ($fileError !== UPLOAD_ERR_NO_FILE) {
+  $attachment = read_cv_attachment();
+  if ($attachment === false) {
+    http_response_code(422);
+    echo json_encode(['ok' => false, 'error' => 'Please attach a PDF, DOC, or DOCX file under 4 MB.']);
+    exit;
+  }
+  if (is_array($attachment)) {
+    $body .= "\nCV attached: " . $attachment['name'] . "\n";
+  }
+}
+
+$recipients = $isCareer ? [$mailbox] : ($config['to'] ?? discover_mailboxes($domain, $mailbox));
 if (!is_array($recipients) || $recipients === []) {
   $recipients = [$mailbox];
 }
@@ -188,7 +249,7 @@ if ($recipients === []) {
 
 $delivered = 0;
 foreach ($recipients as $addr) {
-  $local = deliver_maildir($addr, $mailbox, $name, $replyTo, $subject, $body);
+  $local = deliver_maildir($addr, $mailbox, $name, $replyTo, $subject, $body, $attachment);
   if ($local) {
     $delivered++;
     continue;
@@ -205,7 +266,7 @@ foreach ($recipients as $addr) {
 
 if ($delivered === 0) {
   http_response_code(500);
-  echo json_encode(['ok' => false, 'error' => 'The note could not be sent. Write to info@recruitexa.com.']);
+  echo json_encode(['ok' => false, 'error' => 'The note could not be sent. Write to ' . $mailbox . '.']);
   exit;
 }
 

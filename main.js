@@ -813,11 +813,12 @@
         return;
       }
 
+      const isCareer = form.dataset.intent === "career";
       const checks = [
         ["name", (value) => value.trim().length > 1, "Please add your name."],
         ["email", (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()), "Please add an email that can be answered."],
-        ["service", (value) => value.trim() !== "", "Please choose what you need."],
-        ["message", (value) => value.trim().length > 8, "A few lines are enough — what do you need?"]
+        ["service", (value) => value.trim() !== "", isCareer ? "Please choose an area of interest." : "Please choose what you need."],
+        ["message", (value) => value.trim().length > 8, isCareer ? "A few lines on your work are enough." : "A few lines are enough — what do you need?"]
       ];
 
       const problems = [];
@@ -832,6 +833,19 @@
         problems.push(message);
         if (!firstInvalid) firstInvalid = control;
       });
+
+      const cv = form.querySelector("[name='cv']");
+      if (cv && cv.files && cv.files[0]) {
+        const file = cv.files[0];
+        const okType = /\.(pdf|docx?)$/i.test(file.name);
+        const field = cv.closest(".field");
+        if (!okType || file.size > 4 * 1024 * 1024) {
+          if (field) field.classList.add("is-invalid");
+          cv.setAttribute("aria-invalid", "true");
+          problems.push("Please attach a PDF, DOC, or DOCX file under 4 MB.");
+          if (!firstInvalid) firstInvalid = cv;
+        }
+      }
 
       if (problems.length) {
         note.textContent = problems[0];
