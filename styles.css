@@ -6291,3 +6291,143 @@ body {
   line-height: 1.55;
 }
 
+
+/* ==========================================================
+   Glassmorphism sections
+   Surfaces only: frosted cards over soft colour orbs.
+   Text, fonts, colours of type and layout are unchanged.
+   ========================================================== */
+
+:root {
+  --gl-fill: rgba(255, 255, 255, 0.30);
+  --gl-fill-strong: rgba(255, 255, 255, 0.48);
+  --gl-edge: rgba(255, 255, 255, 0.72);
+  --gl-shadow: 0 18px 44px rgba(10, 29, 61, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+  --gl-blur: blur(20px) saturate(1.55);
+}
+
+/* Coloured light behind the glass (a flat page would hide the effect) */
+main .why,
+main .services,
+main .record,
+main .ways,
+main .skills,
+main .faq-section,
+main .contact {
+  background: transparent;
+}
+
+/* Fixed colour glows: cards slide over them, so the blur is visible everywhere */
+.aurora { display: block; }
+.aurora span:nth-child(1) { background: radial-gradient(circle, rgba(107, 22, 41, 0.48), transparent 68%); width: 56vw; height: 56vw; }
+.aurora span:nth-child(2) { background: radial-gradient(circle, rgba(10, 29, 61, 0.20), transparent 70%); width: 50vw; height: 50vw; }
+.aurora span:nth-child(3) { background: radial-gradient(circle, rgba(126, 182, 255, 0.60), transparent 70%); width: 40vw; height: 40vw; }
+.aurora span:nth-child(4) { background: radial-gradient(circle, rgba(196, 70, 104, 0.50), transparent 70%); width: 32vw; height: 32vw; }
+.aurora span { filter: blur(30px); }
+
+main .method-section {
+  background:
+    radial-gradient(520px 420px at 8% 12%, rgba(107, 22, 41, 0.62), transparent 70%),
+    radial-gradient(560px 440px at 92% 88%, rgba(126, 182, 255, 0.30), transparent 70%),
+    radial-gradient(420px 320px at 52% 50%, rgba(107, 22, 41, 0.22), transparent 70%),
+    #0A1D3D;
+}
+
+/* Frosted panels */
+main .trust-card,
+main .why-card,
+main .svc-card,
+main .industry-item,
+main .way-plain,
+main .facts-board,
+main .faq-item,
+main .record-note,
+main .channel,
+main .contact-panel,
+main .intro-cal {
+  background: var(--gl-fill);
+  border: 1px solid var(--gl-edge);
+  box-shadow: var(--gl-shadow);
+  -webkit-backdrop-filter: var(--gl-blur);
+  backdrop-filter: var(--gl-blur);
+}
+
+main .record-note { border-left: 3px solid #6B1629; }
+
+main .trust-card:hover,
+main .why-card:hover,
+main .svc-card:hover,
+main .industry-item:hover,
+main .industry-item[open],
+main .way-plain:hover,
+main .channel:hover {
+  background: var(--gl-fill-strong);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 26px 56px rgba(10, 29, 61, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Inner tiles, pills and fields */
+main .why-panel,
+main .process-portals li,
+main .contact-points li,
+main .channel-ic {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+main .contact .field input,
+main .contact .field select,
+main .contact .field textarea {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+main .contact .field input:focus,
+main .contact .field select:focus,
+main .contact .field textarea:focus {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+/* Method steps: frosted light glass over the navy section */
+main .steps li {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.64));
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+}
+
+/* Photos sit inside glass frames */
+main .svc-media { background: rgba(255, 255, 255, 0.35); }
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  main .trust-card,
+  main .why-card,
+  main .svc-card,
+  main .industry-item,
+  main .way-plain,
+  main .facts-board,
+  main .faq-item,
+  main .record-note,
+  main .channel,
+  main .contact-panel,
+  main .intro-cal { background: rgba(255, 255, 255, 0.92); }
+}
+
+/* Featured engagement card keeps its light-on-dark text: dark navy glass */
+main .way-plain--focus,
+main .way-plain--focus:hover {
+  background: linear-gradient(160deg, rgba(10, 29, 61, 0.78), rgba(10, 29, 61, 0.58));
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 22px 48px rgba(10, 29, 61, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  backdrop-filter: blur(20px) saturate(1.4);
+}
+
+/* #about had an ID-level solid background */
+main #about { background: transparent; }
+

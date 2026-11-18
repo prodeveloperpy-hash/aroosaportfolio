@@ -588,8 +588,8 @@
     recruitment: {
       title: "Recruitment",
       select: "Recruitment",
-      img: "assets/pro-handshake.jpg",
-      alt: "A hiring conversation sealed across the table.",
+      img: "assets/pro-interview.jpg",
+      alt: "A hiring conversation across a glass boardroom table.",
       lead: "From the brief to the person who starts.",
       who: "For founders and companies who need end-to-end recruitment and permanent hiring — technical, non-technical, executive, and specialist seats, including US federal contracting (SAM.gov).",
       includes: [
@@ -630,8 +630,8 @@
     "lead-generation": {
       title: "B2B Lead Generation",
       select: "B2B Lead Generation",
-      img: "assets/pro-bd.jpg",
-      alt: "A professional building a B2B pipeline.",
+      img: "assets/pro-strategy.jpg",
+      alt: "Mapping a B2B outbound pipeline on a whiteboard.",
       lead: "Targeted decision-maker lists and outbound pipelines that open real conversations.",
       who: "For agencies, founders, and sales teams who need ICP research, verified contacts, and CRM-ready prospect lists.",
       includes: [
@@ -651,8 +651,8 @@
     "reverse-recruiting": {
       title: "Reverse Recruitment",
       select: "Reverse Recruitment",
-      img: "assets/pro-interview.jpg",
-      alt: "A private conversation about the next role.",
+      img: "assets/pro-hr.jpg",
+      alt: "Reviewing a candidate's job applications together.",
       lead: "I run the job search on your behalf — backed by 25+ placements in the US and UAE.",
       who: "For job seekers and professionals targeting US, UAE, UK, or global remote roles who want the search run with candidate approval at every step.",
       includes: [
