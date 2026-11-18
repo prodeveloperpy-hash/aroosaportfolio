@@ -29,6 +29,7 @@ $company = clean_line($_POST['company'] ?? '', 160);
 $replyTo = clean_line($_POST['email'] ?? '', 160);
 $service = clean_line($_POST['service'] ?? '', 160);
 $timeline = clean_line($_POST['timeline'] ?? '', 160);
+$intro = clean_line($_POST['intro'] ?? '', 160);
 $message = trim(str_replace("\r", '', (string)($_POST['message'] ?? '')));
 $message = function_exists('mb_substr') ? mb_substr($message, 0, 4000) : substr($message, 0, 4000);
 
@@ -47,7 +48,8 @@ $body = "Name: {$name}\n"
   . "Company / LinkedIn: " . ($company !== '' ? $company : '-') . "\n"
   . "Email: {$replyTo}\n"
   . "Regarding: {$service}\n"
-  . "Timeline: " . ($timeline !== '' ? $timeline : '-') . "\n\n"
+  . "Timeline: " . ($timeline !== '' ? $timeline : '-') . "\n"
+  . "Preferred intro: " . ($intro !== '' ? $intro : '-') . "\n\n"
   . "{$message}\n";
 
 $config = [

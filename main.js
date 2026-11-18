@@ -542,22 +542,6 @@
       pausePlay();
     }
 
-    if (!reduceMotion) {
-      showRoot.addEventListener("mousemove", (event) => {
-        const photo = showRoot.querySelector(".show-pane.is-on .show-photo");
-        if (!photo) return;
-        const box = photo.getBoundingClientRect();
-        const x = (event.clientX - box.left) / box.width - 0.5;
-        const y = (event.clientY - box.top) / box.height - 0.5;
-        if (Math.abs(x) > 0.7 || Math.abs(y) > 0.7) return;
-        photo.style.transform = `rotateY(${(x * 8).toFixed(2)}deg) rotateX(${(-y * 6).toFixed(2)}deg)`;
-      });
-      showRoot.addEventListener("mouseleave", () => {
-        showRoot.querySelectorAll(".show-photo").forEach((photo) => {
-          photo.style.transform = "";
-        });
-      });
-    }
   }
 
   const form = document.getElementById("brief");
@@ -895,5 +879,93 @@
       });
     });
     syncIndustryNote();
+  }
+
+  const calRoot = document.getElementById("intro");
+  if (calRoot && form) {
+    const grid = document.getElementById("cal-grid");
+    const monthLabel = document.getElementById("cal-month");
+    const times = document.getElementById("cal-times");
+    const picked = document.getElementById("cal-picked");
+    const slot = document.getElementById("intro-slot");
+    const slots = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
+    let view = new Date();
+    view.setDate(1);
+    let dayKey = "";
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const ymd = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+    const paintMonth = () => {
+      const year = view.getFullYear();
+      const month = view.getMonth();
+      monthLabel.textContent = view.toLocaleString(undefined, { month: "long", year: "numeric" });
+      const first = new Date(year, month, 1);
+      let start = (first.getDay() + 6) % 7;
+      const days = new Date(year, month + 1, 0).getDate();
+      grid.innerHTML = "";
+      for (let i = 0; i < start; i += 1) {
+        grid.appendChild(document.createElement("span"));
+      }
+      for (let d = 1; d <= days; d += 1) {
+        const date = new Date(year, month, d);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = String(d);
+        const weekend = date.getDay() === 0 || date.getDay() === 6;
+        const past = date < today;
+        if (weekend || past) {
+          btn.disabled = true;
+        } else {
+          btn.addEventListener("click", () => {
+            dayKey = ymd(date);
+            [...grid.querySelectorAll("button")].forEach((el) => el.classList.toggle("is-on", el === btn));
+            paintTimes();
+          });
+        }
+        if (dayKey === ymd(date)) btn.classList.add("is-on");
+        grid.appendChild(btn);
+      }
+    };
+
+    const paintTimes = () => {
+      if (!dayKey) return;
+      times.hidden = false;
+      times.innerHTML = slots.map((time) => `<button type="button" data-time="${time}">${time}</button>`).join("");
+      [...times.querySelectorAll("button")].forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const value = `${dayKey} ${btn.dataset.time} (20-minute intro, local time)`;
+          slot.value = value;
+          picked.hidden = false;
+          picked.textContent = `Requested: ${value}`;
+          [...times.querySelectorAll("button")].forEach((el) => el.classList.toggle("is-on", el === btn));
+        });
+      });
+    };
+
+    document.getElementById("cal-prev")?.addEventListener("click", () => {
+      view.setMonth(view.getMonth() - 1);
+      paintMonth();
+    });
+    document.getElementById("cal-next")?.addEventListener("click", () => {
+      view.setMonth(view.getMonth() + 1);
+      paintMonth();
+    });
+    paintMonth();
+
+    const resetCal = () => {
+      slot.value = "";
+      dayKey = "";
+      times.hidden = true;
+      times.innerHTML = "";
+      picked.hidden = true;
+      picked.textContent = "";
+      paintMonth();
+    };
+    if (again) {
+      again.addEventListener("click", resetCal);
+    }
+    form.addEventListener("reset", resetCal);
   }
 })();

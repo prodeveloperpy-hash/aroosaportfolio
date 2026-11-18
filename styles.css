@@ -4113,11 +4113,13 @@ html, body { background: #F7F5F0; color: #0A1D3D; }
 }
 
 .brand-mark {
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
   display: block;
-  border-radius: 9px;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
 }
 
 .brand-text {
@@ -4129,20 +4131,24 @@ html, body { background: #F7F5F0; color: #0A1D3D; }
 }
 
 .footer .brand-mark {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 76px;
+  height: 76px;
+  border-radius: 0;
+  background: transparent;
+  filter: brightness(0) invert(1);
 }
 
 .footer .brand-text { color: #FFFFFF; font-size: 1.35rem; }
 
 .intro-logo {
-  width: 72px;
-  height: 72px;
+  width: 112px;
+  height: 112px;
   margin: 0 auto 0.85rem;
   display: block;
-  border-radius: 18px;
-  box-shadow: 0 0 0 3px rgba(247, 245, 240, 0.18);
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
   animation: pop 0.75s var(--ease) both;
 }
 .footer .wordmark small { color: rgba(247, 245, 240, 0.55); }
@@ -5305,7 +5311,7 @@ html, body { background: #F7F5F0; color: #0A1D3D; }
   object-position: 50% 28%;
 }
 
-.hero-bg img:nth-child(1) { object-position: 68% 18%; }
+.hero-bg img:nth-child(1) { object-position: 50% 36%; }
 .hero-bg img:nth-child(2) { object-position: 50% 42%; }
 .hero-bg img:nth-child(3) { object-position: 62% 32%; }
 .hero-bg img:nth-child(4) { object-position: 72% 18%; }
@@ -6063,7 +6069,7 @@ body {
 @media (max-width: 640px) {
   :root { --pad: 1.05rem; }
 
-  .hero-bg img:nth-child(1) { object-position: 60% 16%; }
+  .hero-bg img:nth-child(1) { object-position: 50% 32%; }
 
   .hero-caption span {
     font-size: 0.72rem;
@@ -6131,4 +6137,252 @@ body {
     justify-content: center;
     text-align: center;
   }
+}
+
+/* Full images, no crop / no rotate */
+.hero-bg {
+  background: #0A1D3D;
+}
+
+.hero-bg img,
+.hero-bg img:nth-child(n),
+.about-photo img,
+.svc-media img,
+.svc-shots img,
+.vcard img,
+.show-photo img,
+.service-hero img,
+.career-hero img,
+.career-path-media img,
+.band img,
+.ping-face,
+#recruitment .svc-media img,
+#talent-sourcing .svc-media img,
+#lead-generation .svc-media img,
+#reverse-recruiting .svc-media img,
+#cv-career .svc-media img {
+  object-fit: contain;
+  object-position: center center;
+  transform: none;
+  animation: none;
+}
+
+#cv-career img,
+.svc-card:hover .svc-media img,
+.svc-card:hover .svc-shots img,
+.career-path:hover .career-path-media img,
+.vcard:hover img,
+#cv-career:hover img {
+  transform: none;
+}
+
+.about-photo {
+  background: #F7F5F0;
+}
+
+.about-photo img {
+  width: 100%;
+  height: auto;
+  max-height: none;
+}
+
+.brand-mark,
+.intro-logo,
+.footer .brand-mark {
+  object-fit: contain;
+  overflow: visible;
+  background: transparent;
+  border-radius: 0;
+}
+
+.tile:hover .tile-icon,
+.steps li:hover .step-icon {
+  transform: none;
+}
+
+.career-paths {
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.career-path {
+  border-radius: 28px;
+}
+
+.career-path-media {
+  height: 16.2rem;
+  background: #0A1D3D;
+}
+
+.career-path-media::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 42%;
+  pointer-events: none;
+}
+
+.career-path--join .career-path-media::after {
+  background: linear-gradient(to top, #0A1D3D, transparent);
+}
+
+.career-path--seek .career-path-media {
+  background: #F7F5F0;
+}
+
+.career-path--seek .career-path-media::after {
+  background: linear-gradient(to top, #FFFFFF, transparent);
+}
+
+.career-path-media img,
+.career-path:hover .career-path-media img {
+  object-fit: cover;
+  object-position: 50% 28%;
+  width: 100%;
+  height: 100%;
+  transform: none;
+}
+
+.career-path--join .career-path-media img { object-position: 50% 22%; }
+.career-path--seek .career-path-media img { object-position: 50% 18%; }
+
+.career-path-copy {
+  padding: 1.55rem 1.55rem 1.65rem;
+}
+
+.career-path .btn {
+  min-width: 8.5rem;
+  justify-content: center;
+}
+
+@media (max-width: 860px) {
+  .career-path-media { height: 13.5rem; }
+}
+
+.intro-cal {
+  margin-top: 1.6rem;
+  padding: 1.15rem 1.15rem 1.2rem;
+  background: #FFFFFF;
+  border: 1px solid rgba(10, 29, 61, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 16px 36px rgba(10, 29, 61, 0.06);
+}
+
+.intro-cal h3 {
+  margin: 0.15rem 0 0.35rem;
+  color: #0A1D3D;
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.intro-cal-note {
+  margin: 0 0 0.95rem;
+  color: #5c6570;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+
+.cal-head p {
+  margin: 0;
+  color: #0A1D3D;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.cal-head button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(10, 29, 61, 0.12);
+  border-radius: 999px;
+  background: #F7F5F0;
+  color: #0A1D3D;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cal-dow,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.28rem;
+}
+
+.cal-dow {
+  margin-bottom: 0.35rem;
+}
+
+.cal-dow span {
+  text-align: center;
+  color: #8a9098;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cal-grid button,
+.cal-grid span {
+  min-height: 2rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #0A1D3D;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.cal-grid button {
+  cursor: pointer;
+  background: #F7F5F0;
+}
+
+.cal-grid button:hover:not(:disabled) {
+  background: #E8D4D8;
+}
+
+.cal-grid button:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.cal-grid button.is-on,
+.cal-times button.is-on {
+  background: #6B1629;
+  color: #fff;
+}
+
+.cal-times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.85rem;
+}
+
+.cal-times button {
+  border: 1px solid rgba(10, 29, 61, 0.12);
+  border-radius: 999px;
+  background: #F7F5F0;
+  color: #0A1D3D;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.42rem 0.7rem;
+  cursor: pointer;
+}
+
+.cal-picked {
+  margin: 0.8rem 0 0;
+  color: #6B1629;
+  font-size: 0.82rem;
+  font-weight: 700;
 }
