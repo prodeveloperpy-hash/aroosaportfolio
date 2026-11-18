@@ -891,6 +891,8 @@
     const noteEl = root.querySelector("[data-cal-note]");
     const okEl = root.querySelector("[data-cal-ok]");
     const whenEl = root.querySelector("[data-cal-when]");
+    const meetEl = root.querySelector("[data-cal-meet]");
+    const meetWrap = root.querySelector("[data-cal-meet-wrap]");
     const prev = root.querySelector("[data-cal-prev]");
     const next = root.querySelector("[data-cal-next]");
     if (!monthEl || !daysEl || !slotsEl || !form) return;
@@ -1031,6 +1033,11 @@
         const when = result.when || "Your intro is booked.";
         await load();
         if (whenEl) whenEl.textContent = when;
+        if (meetWrap) meetWrap.hidden = !result.meet;
+        if (meetEl && result.meet) {
+          meetEl.href = result.meet;
+          meetEl.textContent = "Open Meet";
+        }
         if (okEl) okEl.hidden = false;
         setNote("");
       } catch (err) {

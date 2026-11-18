@@ -9,6 +9,8 @@ const BOOK_END_HOUR = 17;
 const BOOK_HORIZON_DAYS = 28;
 const BOOK_LEAD_MINUTES = 120;
 
+require_once __DIR__ . '/google.php';
+
 function book_clean($value, $max) {
   $value = trim(str_replace(["\r", "\n"], ' ', (string)$value));
   return function_exists('mb_substr') ? mb_substr($value, 0, $max) : substr($value, 0, $max);
@@ -108,7 +110,7 @@ function taken_keys($rows) {
   return $keys;
 }
 
-function build_slots(DateTimeImmutable $from, DateTimeImmutable $until, array $taken) {
+function build_slots(DateTimeImmutable $from, DateTimeImmutable $until, array $taken, array $busy = []) {
   $zone = tz();
   $now = new DateTimeImmutable('now', $zone);
   $lead = $now->modify('+' . BOOK_LEAD_MINUTES . ' minutes');
@@ -124,7 +126,8 @@ function build_slots(DateTimeImmutable $from, DateTimeImmutable $until, array $t
       $close = $cursor->setTime(BOOK_END_HOUR, 0);
       while ($start < $close) {
         $iso = slot_iso($start);
-        if ($start >= $lead && empty($taken[$iso])) {
+        $slotEnd = $start->modify('+' . BOOK_DURATION . ' minutes');
+        if ($start >= $lead && empty($taken[$iso]) && !google_slot_busy($start, $slotEnd, $busy)) {
           $slots[] = [
             'start' => $iso,
             'label' => $start->format('g:i A'),
@@ -144,13 +147,13 @@ function build_slots(DateTimeImmutable $from, DateTimeImmutable $until, array $t
   return $days;
 }
 
-function valid_generated_slot(DateTimeImmutable $start, array $taken) {
+function valid_generated_slot(DateTimeImmutable $start, array $taken, array $busy = []) {
   $iso = slot_iso($start);
   if (!empty($taken[$iso])) {
     return false;
   }
   $day = $start->setTime(0, 0);
-  $days = build_slots($day, $day, $taken);
+  $days = build_slots($day, $day, $taken, $busy);
   foreach ($days[0]['slots'] ?? [] as $slot) {
     if ($slot['start'] === $iso) {
       return true;
@@ -159,7 +162,7 @@ function valid_generated_slot(DateTimeImmutable $start, array $taken) {
   return false;
 }
 
-function ics_for($start, $name, $email, $note) {
+function ics_for($start, $name, $email, $note, $meet = '') {
   $end = $start->modify('+' . BOOK_DURATION . ' minutes');
   $utcStart = $start->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
   $utcEnd = $end->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
@@ -167,6 +170,9 @@ function ics_for($start, $name, $email, $note) {
   $desc = 'Intro call with Recruitexa.\nGuest: ' . $name . ' <' . $email . '>';
   if ($note !== '') {
     $desc .= '\nNote: ' . str_replace(["\r", "\n"], ' ', $note);
+  }
+  if ($meet !== '') {
+    $desc .= '\nGoogle Meet: ' . $meet;
   }
   $lines = [
     'BEGIN:VCALENDAR',
@@ -183,14 +189,14 @@ function ics_for($start, $name, $email, $note) {
     'DESCRIPTION:' . $desc,
     'ORGANIZER;CN=Recruitexa:mailto:info@recruitexa.com',
     'ATTENDEE;CN=' . $name . ':mailto:' . $email,
-    'LOCATION:Link to follow by email or WhatsApp',
+    'LOCATION:' . ($meet !== '' ? $meet : 'Google Meet'),
     'END:VEVENT',
     'END:VCALENDAR',
   ];
   return implode("\r\n", $lines) . "\r\n";
 }
 
-function deliver_booking_mail($name, $email, $start, $note) {
+function deliver_booking_mail($name, $email, $start, $note, $meet = '') {
   $home = book_home();
   $newDir = $home . '/mail/recruitexa.com/info/new';
   $tmpDir = $home . '/mail/recruitexa.com/info/tmp';
@@ -198,14 +204,15 @@ function deliver_booking_mail($name, $email, $start, $note) {
     return false;
   }
   $when = $start->format('l, F j, Y \a\t g:i A T');
+  $meetLine = $meet !== '' ? "Google Meet: {$meet}\n" : "Google Meet: not connected yet (open google-connect.php).\n";
   $body = "A 30-minute intro was booked on recruitexa.com.\n\n"
     . "When: {$when}\n"
     . "Guest: {$name}\n"
     . "Email: {$email}\n"
-    . "Note: " . ($note !== '' ? $note : '-') . "\n\n"
-    . "Open the attached .ics file to add this to your calendar.\n"
-    . "Send the guest a Meet/Zoom/WhatsApp link from this thread.\n";
-  $ics = ics_for($start, $name, $email, $note);
+    . "Note: " . ($note !== '' ? $note : '-') . "\n"
+    . $meetLine . "\n"
+    . "Google also sends the calendar invite to the guest when Meet is connected.\n";
+  $ics = ics_for($start, $name, $email, $note, $meet);
   $host = preg_replace('/[^A-Za-z0-9.-]/', '', gethostname() ?: 'recruitexa.com');
   $messageId = '<' . bin2hex(random_bytes(8)) . '@' . $host . '>';
   $boundary = 'rx' . bin2hex(random_bytes(12));
@@ -260,8 +267,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo json_encode(['ok' => false]);
     exit;
   }
-  $until = $from->modify('last day of this month');
+  $until = $from->modify('last day of this month')->setTime(23, 59);
   $taken = taken_keys(load_bookings());
+  $busy = google_busy_ranges($from, $until->modify('+1 day'));
   echo json_encode([
     'ok' => true,
     'tz' => BOOK_TZ,
@@ -269,7 +277,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     'duration' => BOOK_DURATION,
     'month' => $month,
     'monthLabel' => $from->format('F Y'),
-    'days' => build_slots($from, $until, $taken),
+    'meet' => google_token() !== '',
+    'days' => build_slots($from, $until, $taken, $busy),
   ]);
   exit;
 }
@@ -316,7 +325,8 @@ if (!$lock || !flock($lock, LOCK_EX)) {
 
 $rows = load_bookings();
 $taken = taken_keys($rows);
-if (!valid_generated_slot($start, $taken)) {
+$busy = google_busy_ranges($start->modify('-1 hour'), $start->modify('+2 hours'));
+if (!valid_generated_slot($start, $taken, $busy)) {
   flock($lock, LOCK_UN);
   fclose($lock);
   http_response_code(409);
@@ -330,6 +340,7 @@ $row = [
   'name' => $name,
   'email' => $email,
   'note' => $note,
+  'meet' => '',
   'created' => gmdate('c'),
 ];
 $rows[] = $row;
@@ -347,9 +358,17 @@ if (!save_bookings($rows)) {
 flock($lock, LOCK_UN);
 fclose($lock);
 
-deliver_booking_mail($name, $email, $start, $note);
+$meetEvent = google_create_meet($start, $name, $email, $note);
+$meet = (string)($meetEvent['meet'] ?? '');
+if ($meet !== '') {
+  $rows[array_key_last($rows)]['meet'] = $meet;
+  save_bookings($rows);
+}
+
+deliver_booking_mail($name, $email, $start, $note, $meet);
 
 echo json_encode([
   'ok' => true,
   'when' => $start->format('l, F j, Y \a\t g:i A T'),
+  'meet' => $meet,
 ]);

@@ -9,6 +9,8 @@ deployment:
     - /bin/cp main.js $HOME/public_html/
     - /bin/cp send.php $HOME/public_html/
     - /bin/cp book.php $HOME/public_html/
+    - /bin/cp google.php $HOME/public_html/
+    - /bin/cp google-connect.php $HOME/public_html/
     - /bin/cp favicon.svg $HOME/public_html/
     - /bin/cp favicon.png $HOME/public_html/
     - /bin/cp -R assets/. $HOME/public_html/assets/

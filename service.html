@@ -18,7 +18,7 @@
       document.documentElement.setAttribute("data-theme", "light");
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=111">
+  <link rel="stylesheet" href="styles.css?v=112">
 </head>
 <body data-email="info@recruitexa.com">
   <svg class="sprite" aria-hidden="true">
@@ -209,7 +209,7 @@
       <div class="wrap intro-cal" id="book">
         <p class="kicker">Free intro call</p>
         <h3>Book a 30-minute intro</h3>
-        <p class="intro-cal-note">Pick a weekday slot on Recruitexa’s calendar. Confirmation shows on this page, and the request lands in info@recruitexa.com with a calendar file attached.</p>
+        <p class="intro-cal-note">Pick a weekday slot. Google Calendar adds the meeting, creates a Meet link, and emails the invite to you.</p>
         <div class="rx-cal" data-calendar>
           <div class="rx-cal-head">
             <button type="button" class="rx-cal-nav" data-cal-prev aria-label="Previous month">‹</button>
@@ -232,7 +232,8 @@
           <div class="rx-cal-ok" data-cal-ok hidden>
             <p class="kicker">Booked</p>
             <h4 data-cal-when></h4>
-            <p>Marium will send the call link to your email or WhatsApp. The booking is already in info@recruitexa.com.</p>
+            <p data-cal-meet-wrap hidden>Join with Google Meet: <a data-cal-meet href="#" target="_blank" rel="noopener">Open Meet</a></p>
+            <p>A calendar invite also goes to your email from Google. Recruitexa has the same booking in info@recruitexa.com.</p>
           </div>
         </div>
       </div>
@@ -289,6 +290,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=47"></script>
+  <script src="main.js?v=48"></script>
 </body>
 </html>
