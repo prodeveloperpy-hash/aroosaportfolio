@@ -6465,3 +6465,123 @@ main .skill-note { color: var(--read); }
 
 main .why-contact em,
 main .way-meta dt { opacity: 1; }
+
+/* ==========================================================
+   Glass animation (CSS only; all of it stops for reduced motion)
+   ========================================================== */
+
+/* Living background: the colour glows drift, breathe and slowly turn */
+@keyframes glowDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  33%  { transform: translate3d(7vw, -5vh, 0) scale(1.18); }
+  66%  { transform: translate3d(-6vw, 6vh, 0) scale(0.92); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes glowHue {
+  0%, 100% { filter: blur(30px) hue-rotate(0deg); }
+  50%      { filter: blur(34px) hue-rotate(28deg); }
+}
+
+.aurora span:nth-child(1) { animation: glowDrift 22s ease-in-out infinite, glowHue 18s ease-in-out infinite; }
+.aurora span:nth-child(2) { animation: glowDrift 26s ease-in-out -6s infinite reverse, glowHue 22s ease-in-out -4s infinite; }
+.aurora span:nth-child(3) { animation: glowDrift 19s ease-in-out -3s infinite, glowHue 16s ease-in-out -8s infinite; }
+.aurora span:nth-child(4) { animation: glowDrift 24s ease-in-out -11s infinite reverse, glowHue 20s ease-in-out -2s infinite; }
+
+/* Cards hover gently, each on its own beat (uses `translate`, so it never clashes with hover/reveal transforms) */
+@keyframes glassFloat {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -7px; }
+}
+
+main .trust-card,
+main .why-card,
+main .svc-card,
+main .way-plain,
+main .industry-item,
+main .facts-board,
+main .channel {
+  animation: glassFloat 7s ease-in-out infinite;
+}
+
+main .trust-card:nth-child(2), main .why-card:nth-child(2), main .svc-card:nth-child(2), main .way-plain:nth-child(2) { animation-delay: -1.4s; }
+main .trust-card:nth-child(3), main .why-card:nth-child(3), main .svc-card:nth-child(3), main .way-plain:nth-child(3) { animation-delay: -2.8s; }
+main .trust-card:nth-child(4), main .svc-card:nth-child(4) { animation-delay: -4.2s; }
+main .svc-card:nth-child(5) { animation-delay: -5.6s; }
+main .industry-item:nth-child(2n) { animation-delay: -2s; }
+main .industry-item:nth-child(3n) { animation-delay: -4s; }
+
+main .trust-card:hover,
+main .why-card:hover,
+main .svc-card:hover,
+main .way-plain:hover,
+main .industry-item:hover,
+main .channel:hover { animation-play-state: paused; }
+
+/* A slow light sweep across the glass (stops on hover, where the card brightens instead) */
+@keyframes glassSheen {
+  0%, 55% { background-position: 160% 0; }
+  100%    { background-position: -60% 0; }
+}
+
+main .trust-card,
+main .why-card,
+main .svc-card,
+main .way-plain:not(.way-plain--focus),
+main .industry-item,
+main .facts-board,
+main .channel,
+main .contact-panel {
+  background-image: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.55) 50%, transparent 62%);
+  background-size: 260% 100%;
+  background-repeat: no-repeat;
+  background-position: 160% 0;
+  animation-name: glassFloat, glassSheen;
+  animation-duration: 7s, 9s;
+  animation-timing-function: ease-in-out, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+}
+
+main .contact-panel { animation-name: glassSheen; animation-duration: 11s; }
+main .way-plain--focus { animation: glassFloat 7s ease-in-out -1.4s infinite; }
+
+/* Icons breathe softly */
+@keyframes iconPulse {
+  0%, 100% { scale: 1; }
+  50%      { scale: 1.09; }
+}
+
+main .why-icon,
+main .way-icon,
+main .step-icon,
+main .channel-ic { animation: iconPulse 3.8s ease-in-out infinite; }
+
+main .steps li:nth-child(2n) .step-icon { animation-delay: -1.2s; }
+main .steps li:nth-child(3n) .step-icon { animation-delay: -2.4s; }
+
+/* Score bars glide in a loop so the scorecard feels alive */
+@keyframes barGlint {
+  0%, 60% { filter: brightness(1); }
+  80%     { filter: brightness(1.45); }
+  100%    { filter: brightness(1); }
+}
+
+main .score-bar i { animation: barGlint 4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora span,
+  main .trust-card,
+  main .why-card,
+  main .svc-card,
+  main .way-plain,
+  main .way-plain--focus,
+  main .industry-item,
+  main .facts-board,
+  main .channel,
+  main .contact-panel,
+  main .why-icon,
+  main .way-icon,
+  main .step-icon,
+  main .channel-ic,
+  main .score-bar i { animation: none !important; }
+}
