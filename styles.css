@@ -6319,7 +6319,7 @@ main .contact {
 
 /* Fixed colour glows: cards slide over them, so the blur is visible everywhere */
 .aurora { display: block; }
-.aurora span:nth-child(1) { background: radial-gradient(circle, rgba(107, 22, 41, 0.48), transparent 68%); width: 56vw; height: 56vw; }
+.aurora span:nth-child(1) { background: radial-gradient(circle, rgba(107, 22, 41, 0.36), transparent 68%); width: 56vw; height: 56vw; }
 .aurora span:nth-child(2) { background: radial-gradient(circle, rgba(10, 29, 61, 0.20), transparent 70%); width: 50vw; height: 50vw; }
 .aurora span:nth-child(3) { background: radial-gradient(circle, rgba(126, 182, 255, 0.60), transparent 70%); width: 40vw; height: 40vw; }
 .aurora span:nth-child(4) { background: radial-gradient(circle, rgba(196, 70, 104, 0.50), transparent 70%); width: 32vw; height: 32vw; }
@@ -6431,3 +6431,37 @@ main .way-plain--focus:hover {
 /* #about had an ID-level solid background */
 main #about { background: transparent; }
 
+
+/* Readability: body copy that was mid-grey is now a darker slate, on slightly firmer glass */
+:root { --gl-fill: rgba(255, 255, 255, 0.44); --gl-fill-strong: rgba(255, 255, 255, 0.58); --read: #243040; }
+
+main .section:not(.method-section) .section-lead,
+main .why-intro .section-lead,
+main .record-intro .section-lead,
+main .why-card p,
+main .why-contact em,
+main .score-row span,
+main .trust-note,
+main .svc-body > p,
+main .svc-list li:not(.svc-strong),
+main .record-hint,
+main .record-note,
+main .process-lead,
+main .steps p,
+main .steps li > p,
+main .way-meta dd,
+main .engage-note,
+main .about-body,
+main .about-belief,
+main .fact-v,
+main .faq-item p,
+main .industry-item li,
+main .contact-lead,
+main .contact .form-hint,
+main .form-note,
+main .form-success p,
+main .intro-cal-note,
+main .skill-note { color: var(--read); }
+
+main .why-contact em,
+main .way-meta dt { opacity: 1; }
