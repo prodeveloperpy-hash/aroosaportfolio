@@ -880,4 +880,164 @@
     });
     syncIndustryNote();
   }
+
+  document.querySelectorAll("[data-calendar]").forEach((root) => {
+    const monthEl = root.querySelector("[data-cal-month]");
+    const tzEl = root.querySelector("[data-cal-tz]");
+    const daysEl = root.querySelector("[data-cal-days]");
+    const slotsEl = root.querySelector("[data-cal-slots]");
+    const pickedEl = root.querySelector("[data-cal-picked]");
+    const form = root.querySelector("[data-cal-form]");
+    const noteEl = root.querySelector("[data-cal-note]");
+    const okEl = root.querySelector("[data-cal-ok]");
+    const whenEl = root.querySelector("[data-cal-when]");
+    const prev = root.querySelector("[data-cal-prev]");
+    const next = root.querySelector("[data-cal-next]");
+    if (!monthEl || !daysEl || !slotsEl || !form) return;
+
+    const now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth() + 1;
+    let payload = null;
+    let selectedDate = "";
+    let selectedStart = "";
+
+    const ym = () => `${year}-${String(month).padStart(2, "0")}`;
+
+    const shiftMonth = (delta) => {
+      month += delta;
+      if (month < 1) {
+        month = 12;
+        year -= 1;
+      }
+      if (month > 12) {
+        month = 1;
+        year += 1;
+      }
+    };
+
+    const setNote = (text) => {
+      if (noteEl) noteEl.textContent = text || "";
+    };
+
+    const renderSlots = (day) => {
+      slotsEl.innerHTML = "";
+      selectedStart = "";
+      form.hidden = true;
+      const slots = (day && day.slots) || [];
+      if (pickedEl) {
+        pickedEl.textContent = day
+          ? (slots.length ? `Times on ${day.date}` : "No open times on this day.")
+          : "";
+      }
+      slots.forEach((slot) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "rx-cal-slot";
+        btn.textContent = slot.label;
+        btn.addEventListener("click", () => {
+          selectedStart = slot.start;
+          slotsEl.querySelectorAll(".is-selected").forEach((el) => el.classList.remove("is-selected"));
+          btn.classList.add("is-selected");
+          form.hidden = false;
+          setNote("");
+        });
+        slotsEl.append(btn);
+      });
+    };
+
+    const renderDays = () => {
+      daysEl.innerHTML = "";
+      const days = (payload && payload.days) || [];
+      if (!days.length) return;
+      const first = new Date(`${days[0].date}T12:00:00`);
+      const pad = (first.getDay() + 6) % 7;
+      for (let i = 0; i < pad; i += 1) {
+        const spacer = document.createElement("span");
+        daysEl.append(spacer);
+      }
+      days.forEach((day) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "rx-cal-day";
+        btn.textContent = String(Number(day.date.slice(-2)));
+        const open = Boolean(day.open);
+        if (open) btn.classList.add("is-open");
+        btn.disabled = !open;
+        if (day.date === selectedDate) btn.classList.add("is-selected");
+        btn.addEventListener("click", () => {
+          selectedDate = day.date;
+          daysEl.querySelectorAll(".is-selected").forEach((el) => el.classList.remove("is-selected"));
+          btn.classList.add("is-selected");
+          renderSlots(day);
+        });
+        daysEl.append(btn);
+      });
+    };
+
+    const load = async () => {
+      setNote("");
+      selectedDate = "";
+      selectedStart = "";
+      form.hidden = true;
+      if (okEl) okEl.hidden = true;
+      renderSlots(null);
+      try {
+        const response = await fetch(`book.php?month=${ym()}`);
+        payload = await response.json();
+        if (!response.ok || !payload.ok) throw new Error("bad");
+      } catch (err) {
+        payload = { monthLabel: ym(), tzLabel: "ET", days: [] };
+        setNote("The calendar could not load. Write to info@recruitexa.com or try again.");
+      }
+      monthEl.textContent = payload.monthLabel || ym();
+      if (tzEl) {
+        tzEl.textContent = `${payload.duration || 30}-minute slots · ${payload.tzLabel || "ET"} weekdays`;
+      }
+      const thisYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      if (prev) prev.disabled = ym() <= thisYm;
+      renderDays();
+    };
+
+    if (prev) prev.addEventListener("click", () => { shiftMonth(-1); load(); });
+    if (next) next.addEventListener("click", () => { shiftMonth(1); load(); });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!selectedStart) {
+        setNote("Pick a time first.");
+        return;
+      }
+      const body = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        note: form.note.value.trim(),
+        start: selectedStart,
+        website: form.website.value,
+      };
+      setNote("Booking…");
+      try {
+        const response = await fetch("book.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.ok) {
+          setNote(result.error || "That time could not be booked. Please pick another slot.");
+          if (response.status === 409) load();
+          return;
+        }
+        const when = result.when || "Your intro is booked.";
+        await load();
+        if (whenEl) whenEl.textContent = when;
+        if (okEl) okEl.hidden = false;
+        setNote("");
+      } catch (err) {
+        setNote("The booking could not be sent. Write to info@recruitexa.com.");
+      }
+    });
+
+    load();
+  });
 })();

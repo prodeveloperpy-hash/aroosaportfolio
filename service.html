@@ -18,7 +18,7 @@
       document.documentElement.setAttribute("data-theme", "light");
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=110">
+  <link rel="stylesheet" href="styles.css?v=111">
 </head>
 <body data-email="info@recruitexa.com">
   <svg class="sprite" aria-hidden="true">
@@ -209,8 +209,32 @@
       <div class="wrap intro-cal" id="book">
         <p class="kicker">Free intro call</p>
         <h3>Book a 30-minute intro</h3>
-        <p class="intro-cal-note">Pick a time on Calendly. The meeting is added to Marium’s calendar, and a confirmation email goes to you and to Recruitexa.</p>
-        <div class="calendly-inline-widget" data-url="https://calendly.com/marium-recruitexa/30min?hide_gdpr_banner=1&amp;background_color=ffffff&amp;text_color=0a1d3d&amp;primary_color=6b1629" style="min-width:320px;height:720px;"></div>
+        <p class="intro-cal-note">Pick a weekday slot on Recruitexa’s calendar. Confirmation shows on this page, and the request lands in info@recruitexa.com with a calendar file attached.</p>
+        <div class="rx-cal" data-calendar>
+          <div class="rx-cal-head">
+            <button type="button" class="rx-cal-nav" data-cal-prev aria-label="Previous month">‹</button>
+            <p class="rx-cal-month" data-cal-month></p>
+            <button type="button" class="rx-cal-nav" data-cal-next aria-label="Next month">›</button>
+          </div>
+          <p class="rx-cal-tz" data-cal-tz></p>
+          <div class="rx-cal-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          <div class="rx-cal-grid" data-cal-days></div>
+          <p class="rx-cal-picked" data-cal-picked></p>
+          <div class="rx-cal-slots" data-cal-slots></div>
+          <form class="rx-cal-form" data-cal-form hidden>
+            <label class="field"><span>Name</span><input name="name" type="text" maxlength="120" required autocomplete="name" placeholder="Your name"></label>
+            <label class="field"><span>Email</span><input name="email" type="email" maxlength="160" required autocomplete="email" placeholder="you@company.com"></label>
+            <label class="field field-wide"><span>Note (optional)</span><textarea name="note" maxlength="800" rows="3" placeholder="What should we cover on the call?"></textarea></label>
+            <div class="hp" aria-hidden="true"><label>Leave this blank<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+            <button class="btn btn-cyan" type="submit">Confirm booking</button>
+          </form>
+          <p class="form-note" data-cal-note role="status"></p>
+          <div class="rx-cal-ok" data-cal-ok hidden>
+            <p class="kicker">Booked</p>
+            <h4 data-cal-when></h4>
+            <p>Marium will send the call link to your email or WhatsApp. The booking is already in info@recruitexa.com.</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -265,7 +289,6 @@
     </div>
   </footer>
 
-  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
-  <script src="main.js?v=46"></script>
+  <script src="main.js?v=47"></script>
 </body>
 </html>
