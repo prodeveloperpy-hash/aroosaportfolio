@@ -6262,11 +6262,18 @@ body {
 
 .intro-cal {
   margin-top: 1.6rem;
-  padding: 1.15rem 1.15rem 1.2rem;
+  margin-bottom: 3rem;
+  padding: 1.35rem 1.35rem 0.6rem;
   background: #FFFFFF;
   border: 1px solid rgba(10, 29, 61, 0.08);
-  border-radius: 22px;
+  border-radius: 28px;
   box-shadow: 0 16px 36px rgba(10, 29, 61, 0.06);
+  overflow: hidden;
+}
+
+.calendly-inline-widget {
+  min-width: 320px;
+  height: 720px;
 }
 
 .intro-cal h3 {
@@ -6284,105 +6291,3 @@ body {
   line-height: 1.55;
 }
 
-.cal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  margin-bottom: 0.7rem;
-}
-
-.cal-head p {
-  margin: 0;
-  color: #0A1D3D;
-  font-size: 0.92rem;
-  font-weight: 700;
-}
-
-.cal-head button {
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgba(10, 29, 61, 0.12);
-  border-radius: 999px;
-  background: #F7F5F0;
-  color: #0A1D3D;
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.cal-dow,
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.28rem;
-}
-
-.cal-dow {
-  margin-bottom: 0.35rem;
-}
-
-.cal-dow span {
-  text-align: center;
-  color: #8a9098;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.cal-grid button,
-.cal-grid span {
-  min-height: 2rem;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #0A1D3D;
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-.cal-grid button {
-  cursor: pointer;
-  background: #F7F5F0;
-}
-
-.cal-grid button:hover:not(:disabled) {
-  background: #E8D4D8;
-}
-
-.cal-grid button:disabled {
-  opacity: 0.32;
-  cursor: default;
-}
-
-.cal-grid button.is-on,
-.cal-times button.is-on {
-  background: #6B1629;
-  color: #fff;
-}
-
-.cal-times {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.85rem;
-}
-
-.cal-times button {
-  border: 1px solid rgba(10, 29, 61, 0.12);
-  border-radius: 999px;
-  background: #F7F5F0;
-  color: #0A1D3D;
-  font-size: 0.78rem;
-  font-weight: 700;
-  padding: 0.42rem 0.7rem;
-  cursor: pointer;
-}
-
-.cal-picked {
-  margin: 0.8rem 0 0;
-  color: #6B1629;
-  font-size: 0.82rem;
-  font-weight: 700;
-}

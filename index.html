@@ -26,7 +26,7 @@
       document.documentElement.setAttribute("data-theme", "light");
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=108">
+  <link rel="stylesheet" href="styles.css?v=109">
 </head>
 <body data-email="info@recruitexa.com">
   <svg class="sprite" aria-hidden="true">
@@ -87,7 +87,7 @@
       <a href="#contact">Contact</a>
     </nav>
     <div class="nav-side">
-      <a class="btn btn-cyan nav-mail" href="#intro">Book a Free Intro Call</a>
+      <a class="btn btn-cyan nav-mail" href="#book">Book a Free Intro Call</a>
       <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-panel">
         <span class="sr">Menu</span>
         <i></i><i></i><i></i>
@@ -128,7 +128,7 @@
         <p class="hero-lead" id="hero-lead">Recruitexa helps startups, growing companies, and recruitment agencies hire technical and specialist talent, and build targeted B2B pipelines. You receive <strong>scored shortlists in 2 to 3 weeks</strong>, with a clear written scope before work begins.</p>
         <p class="hero-trust">Remote and confidential. You work directly with me from first conversation to final delivery.</p>
         <p class="hero-caption"><span>Marium · Founder &amp; Principal Recruiter — Recruitexa</span></p>
-        <a class="btn btn-cyan hero-book" href="#intro">Book a Free 20-Minute Intro</a>
+        <a class="btn btn-cyan hero-book" href="#book">Book a Free 20-Minute Intro</a>
       </div>
       <button class="hero-ctrl prev" type="button" id="hero-prev" aria-label="Previous slide">‹</button>
       <button class="hero-ctrl next" type="button" id="hero-next" aria-label="Next slide">›</button>
@@ -698,7 +698,7 @@
                 <p class="fact-v">English</p>
               </article>
             </div>
-            <a class="btn btn-cyan" href="#intro">Book a Free Intro Call</a>
+            <a class="btn btn-cyan" href="#book">Book a Free Intro Call</a>
           </div>
           <figure class="about-photo reveal">
             <img src="assets/real-portrait.jpg?v=p3" alt="Marium, Founder and Principal Recruiter at Recruitexa">
@@ -781,21 +781,6 @@
             <li>Serving US, UK, UAE &amp; global markets</li>
             <li>Reply within one business day</li>
           </ul>
-          <div class="intro-cal" id="intro">
-            <p class="kicker">Free 20-minute intro</p>
-            <h3>Pick a day</h3>
-            <p class="intro-cal-note">Monday to Friday. Times are in your local time. I confirm the slot by email within one business day.</p>
-            <div class="cal-head">
-              <button type="button" id="cal-prev" aria-label="Previous month">‹</button>
-              <p id="cal-month"></p>
-              <button type="button" id="cal-next" aria-label="Next month">›</button>
-            </div>
-            <div class="cal-dow" aria-hidden="true"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
-            <div class="cal-grid" id="cal-grid"></div>
-            <div class="cal-times" id="cal-times" hidden></div>
-            <p class="cal-picked" id="cal-picked" hidden></p>
-            <input type="hidden" name="intro" form="brief" id="intro-slot" value="">
-          </div>
         </div>
         <div class="contact-panel">
           <form id="brief" action="send.php" method="post" novalidate>
@@ -856,6 +841,12 @@
           </div>
         </div>
       </div>
+      <div class="wrap intro-cal" id="book">
+        <p class="kicker">Free intro call</p>
+        <h3>Book a 30-minute intro</h3>
+        <p class="intro-cal-note">Pick a time on Calendly. The meeting is added to Marium’s calendar, and a confirmation email goes to you and to Recruitexa.</p>
+        <div class="calendly-inline-widget" data-url="https://calendly.com/marium-recruitexa/30min?hide_gdpr_banner=1&amp;background_color=ffffff&amp;text_color=0a1d3d&amp;primary_color=6b1629" style="min-width:320px;height:720px;"></div>
+      </div>
     </section>
   </main>
 
@@ -868,7 +859,7 @@
         <p class="footer-tag">Roles Filled. Careers Moved Forward.</p>
         <p>Recruitment, Talent Sourcing, B2B Lead Generation, Reverse Recruitment &amp; CV Formatting.</p>
       </div>
-      <a class="btn btn-cyan" href="#intro">Book a Free Intro Call</a>
+      <a class="btn btn-cyan" href="#book">Book a Free Intro Call</a>
     </div>
     <div class="wrap footer-grid">
       <div>
@@ -909,6 +900,7 @@
     </div>
   </footer>
 
-  <script src="main.js?v=44"></script>
+  <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+  <script src="main.js?v=45"></script>
 </body>
 </html>
