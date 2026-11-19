@@ -62,17 +62,16 @@ function jobs_date($value) {
   return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) ? $value : '';
 }
 
+function jobs_today() {
+  return (new DateTimeImmutable('now', new DateTimeZone('Asia/Karachi')))->format('Y-m-d');
+}
+
 function jobs_is_live(array $job) {
   if (empty($job['open'])) {
     return false;
   }
-  $today = gmdate('Y-m-d');
-  $opens = (string)($job['opens'] ?? '');
   $closes = (string)($job['closes'] ?? '');
-  if ($opens !== '' && $opens > $today) {
-    return false;
-  }
-  if ($closes !== '' && $closes < $today) {
+  if ($closes !== '' && $closes < jobs_today()) {
     return false;
   }
   return true;
