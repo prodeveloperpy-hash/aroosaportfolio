@@ -11,6 +11,9 @@ deployment:
     - /bin/cp book.php $HOME/public_html/
     - /bin/cp google.php $HOME/public_html/
     - /bin/cp google-connect.php $HOME/public_html/
+    - /bin/cp jobs-lib.php $HOME/public_html/
+    - /bin/cp jobs.php $HOME/public_html/
+    - /bin/cp careers-admin.php $HOME/public_html/
     - /bin/cp favicon.svg $HOME/public_html/
     - /bin/cp favicon.png $HOME/public_html/
     - /bin/cp -R assets/. $HOME/public_html/assets/

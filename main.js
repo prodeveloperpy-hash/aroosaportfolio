@@ -1054,4 +1054,42 @@
 
     load();
   });
+
+  const jobsRoot = document.querySelector("[data-jobs]");
+  const jobsList = document.querySelector("[data-jobs-list]");
+  if (jobsRoot && jobsList) {
+    fetch("jobs.php")
+      .then((res) => res.json())
+      .then((data) => {
+        const jobs = (data && data.ok && data.jobs) || [];
+        if (!jobs.length) return;
+        jobs.forEach((job) => {
+          const card = document.createElement("article");
+          card.className = "career-job";
+          const kicker = document.createElement("p");
+          kicker.className = "kicker";
+          kicker.textContent = job.type || "Remote";
+          const title = document.createElement("h3");
+          title.textContent = job.title || "Role";
+          const summary = document.createElement("p");
+          summary.textContent = job.summary || "";
+          const link = document.createElement("a");
+          link.className = "btn btn-cyan";
+          link.href = `#apply`;
+          link.textContent = "Apply";
+          link.addEventListener("click", () => {
+            const note = document.querySelector("#brief textarea[name='message']");
+            const select = document.querySelector("#brief [name='service']");
+            if (select) select.value = "Open application";
+            if (note && job.title && !note.value) {
+              note.value = `Applying for: ${job.title}. `;
+            }
+          });
+          card.append(kicker, title, summary, link);
+          jobsList.append(card);
+        });
+        jobsRoot.hidden = false;
+      })
+      .catch(() => {});
+  }
 })();

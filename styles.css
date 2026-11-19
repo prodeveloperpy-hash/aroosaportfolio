@@ -6699,6 +6699,26 @@ main .score-bar i { animation: barGlint 4s ease-in-out infinite; }
   .rx-cal-form { grid-template-columns: 1fr; }
 }
 
+.career-jobs-wrap { margin: 2.2rem auto 0; }
+.career-jobs {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+.career-job {
+  padding: 1.15rem 1.2rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(10, 29, 61, 0.08);
+}
+.career-job h3 {
+  margin: 0.25rem 0 0.4rem;
+  color: #0A1D3D;
+  font-size: 1.15rem;
+}
+.career-job p { margin: 0; color: #5c6570; }
+.career-job .btn { margin-top: 0.9rem; }
+
 @media (prefers-reduced-motion: reduce) {
   .aurora span,
   main .trust-card,
