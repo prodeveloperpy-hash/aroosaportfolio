@@ -128,7 +128,7 @@ if ($authed && isset($_GET['edit'])) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Careers admin | Recruitexa</title>
-  <link rel="stylesheet" href="styles.css?v=114">
+  <link rel="stylesheet" href="styles.css?v=115">
 </head>
 <body>
   <main class="wrap intro-cal" style="margin-top:2rem;max-width:40rem">
@@ -162,22 +162,20 @@ if ($authed && isset($_GET['edit'])) {
         <label class="field"><span>Closing date (optional)</span><input name="closes" type="date" value="<?php echo jobs_h($edit['closes'] ?? ''); ?>"></label>
         <label class="field field-wide"><span>Summary</span><textarea name="summary" required maxlength="600" rows="4" placeholder="What the seat does, and who should apply."><?php echo jobs_h($edit['summary'] ?? ''); ?></textarea></label>
         <label class="field field-wide"><span>To apply for this role you need (one per line)</span><textarea name="needs" maxlength="1200" rows="4" placeholder="US hours overlap&#10;2+ years talent sourcing&#10;Fluent English"><?php echo jobs_h(implode("\n", (array)($edit['needs'] ?? []))); ?></textarea></label>
-        <p class="intro-cal-note" style="margin:0">Extra questions become extra fields on that job’s apply form. Leave a row blank to skip it.</p>
-        <?php
-          $qs = (array)($edit['questions'] ?? []);
-          $byId = [];
-          foreach ($qs as $q) {
-            if (!empty($q['id'])) $byId[$q['id']] = $q;
-          }
-          for ($i = 1; $i <= 6; $i++):
-            $q = $byId['q' . $i] ?? ($qs[$i - 1] ?? []);
-        ?>
-        <div class="field field-wide" style="display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:end">
-          <label><span>Extra question <?php echo $i; ?></span><input name="q<?php echo $i; ?>" maxlength="160" value="<?php echo jobs_h($q['label'] ?? ''); ?>" placeholder="<?php echo $i === 1 ? 'Which ATS have you used?' : ''; ?>"></label>
-          <label style="flex-direction:row;align-items:center;gap:0.4rem;padding-bottom:0.55rem"><input type="checkbox" name="q<?php echo $i; ?>_req" value="1" <?php echo !empty($q['required']) ? 'checked' : ''; ?>> Required</label>
+        <div class="field-wide">
+          <p class="intro-cal-note" style="margin:0 0 0.5rem">Extra questions become extra fields on that job’s apply form. Add as many as you need.</p>
+          <div class="job-q-list" data-q-list>
+            <?php foreach ((array)($edit['questions'] ?? []) as $i => $q): ?>
+              <div class="job-q-row">
+                <input type="text" name="q_label[<?php echo (int)$i; ?>]" maxlength="160" value="<?php echo jobs_h($q['label'] ?? ''); ?>" placeholder="Which ATS have you used?">
+                <label class="job-q-check"><input type="checkbox" name="q_req[<?php echo (int)$i; ?>]" value="1" <?php echo !empty($q['required']) ? 'checked' : ''; ?>> Required</label>
+                <button class="job-q-remove" type="button" data-q-remove>Remove</button>
+              </div>
+            <?php endforeach; ?>
+          </div>
+          <button class="btn btn-ghost" type="button" data-q-add style="margin-top:0.6rem">Add question</button>
         </div>
-        <?php endfor; ?>
-        <label class="field field-wide" style="flex-direction:row;align-items:center;gap:0.5rem"><input type="checkbox" name="open" value="1" <?php echo empty($edit) || !empty($edit['open']) ? 'checked' : ''; ?>> Show on the careers page (after the opening date)</label>
+        <label class="job-q-check field-wide"><input type="checkbox" name="open" value="1" <?php echo empty($edit) || !empty($edit['open']) ? 'checked' : ''; ?>> Show on the careers page</label>
         <button class="btn btn-cyan" type="submit"><?php echo $edit ? 'Update role' : 'Post role'; ?></button>
       </form>
       <?php if (!$store['jobs']): ?>
@@ -223,5 +221,35 @@ if ($authed && isset($_GET['edit'])) {
       <?php endif; ?>
     <?php endif; ?>
   </main>
+  <script>
+    (function () {
+      const list = document.querySelector("[data-q-list]");
+      const addBtn = document.querySelector("[data-q-add]");
+      if (!list || !addBtn) return;
+      const row = (i, label, required) => {
+        const wrap = document.createElement("div");
+        wrap.className = "job-q-row";
+        wrap.innerHTML = '<input type="text" name="q_label[' + i + ']" maxlength="160" placeholder="Which ATS have you used?">'
+          + '<label class="job-q-check"><input type="checkbox" name="q_req[' + i + ']" value="1"> Required</label>'
+          + '<button class="job-q-remove" type="button" data-q-remove>Remove</button>';
+        wrap.querySelector('input[type="text"]').value = label || "";
+        wrap.querySelector('input[type="checkbox"]').checked = !!required;
+        return wrap;
+      };
+      let n = list.querySelectorAll(".job-q-row").length;
+      addBtn.addEventListener("click", () => {
+        if (list.querySelectorAll(".job-q-row").length >= 20) return;
+        list.append(row(n++, "", false));
+        const input = list.querySelector(".job-q-row:last-child input[type='text']");
+        if (input) input.focus();
+      });
+      list.addEventListener("click", (event) => {
+        const btn = event.target.closest("[data-q-remove]");
+        if (!btn) return;
+        btn.closest(".job-q-row")?.remove();
+      });
+      if (!n) list.append(row(n++, "", false));
+    })();
+  </script>
 </body>
 </html>

@@ -79,16 +79,24 @@ function jobs_lines($value, $maxLines = 12, $maxEach = 180) {
 }
 
 function jobs_questions_from_post() {
+  $labels = $_POST['q_label'] ?? [];
+  $reqs = $_POST['q_req'] ?? [];
+  if (!is_array($labels)) {
+    return [];
+  }
   $out = [];
-  for ($i = 1; $i <= 6; $i++) {
-    $label = jobs_clean($_POST['q' . $i] ?? '', 160);
+  foreach ($labels as $i => $label) {
+    if (count($out) >= 20) {
+      break;
+    }
+    $label = jobs_clean($label, 160);
     if ($label === '') {
       continue;
     }
     $out[] = [
-      'id' => 'q' . $i,
+      'id' => 'q' . (count($out) + 1),
       'label' => $label,
-      'required' => isset($_POST['q' . $i . '_req']),
+      'required' => is_array($reqs) && !empty($reqs[$i]),
     ];
   }
   return $out;

@@ -2114,7 +2114,7 @@ html[data-theme="dark"] .offer li {
   color: var(--blue-deep);
 }
 
-.field input,
+.field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
 .field select,
 .field textarea {
   width: 100%;
@@ -2126,6 +2126,18 @@ html[data-theme="dark"] .offer li {
   appearance: none;
   outline: none;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.field input[type="checkbox"],
+.field input[type="radio"] {
+  appearance: auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  padding: 0;
+  flex: none;
+  accent-color: #0A1D3D;
+  border-radius: 4px;
 }
 
 .field textarea { min-height: 120px; resize: vertical; }
@@ -6718,6 +6730,56 @@ main .score-bar i { animation: barGlint 4s ease-in-out infinite; }
 }
 .career-job p { margin: 0; color: #5c6570; }
 .career-job .btn { margin-top: 0.9rem; }
+
+.job-q-list {
+  display: grid;
+  gap: 0.65rem;
+  grid-column: 1 / -1;
+}
+.job-q-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.55rem;
+  align-items: center;
+}
+.job-q-row input[type="text"] {
+  width: 100%;
+  background: var(--sky, #f4f7fb);
+  border: 1px solid var(--line, rgba(10, 29, 61, 0.12));
+  border-radius: 14px;
+  padding: 0.78rem 0.85rem;
+  color: #0A1D3D;
+}
+.job-q-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 0.86rem;
+  color: #0A1D3D;
+}
+.job-q-check input {
+  appearance: auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: #0A1D3D;
+}
+.job-q-remove {
+  border: 1px solid rgba(10, 29, 61, 0.12);
+  background: #fff;
+  color: #6B1629;
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+@media (max-width: 640px) {
+  .job-q-row { grid-template-columns: 1fr auto; }
+  .job-q-remove { grid-column: 2; }
+}
 .career-job .apply-needs { margin: 0.7rem 0 0; }
 .apply-needs {
   margin: 0 0 1rem;
