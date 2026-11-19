@@ -28,27 +28,43 @@ $name = clean_line($_POST['name'] ?? '', 120);
 $company = clean_line($_POST['company'] ?? '', 160);
 $replyTo = clean_line($_POST['email'] ?? '', 160);
 $service = clean_line($_POST['service'] ?? '', 160);
+$role = clean_line($_POST['role'] ?? '', 160);
+$phone = clean_line($_POST['phone'] ?? '', 40);
+$whatsapp = clean_line($_POST['whatsapp'] ?? '', 40);
+$experience = clean_line($_POST['experience'] ?? '', 40);
 $timeline = clean_line($_POST['timeline'] ?? '', 160);
 $intro = clean_line($_POST['intro'] ?? '', 160);
 $message = trim(str_replace("\r", '', (string)($_POST['message'] ?? '')));
 $message = function_exists('mb_substr') ? mb_substr($message, 0, 4000) : substr($message, 0, 4000);
+
+$intent = strtolower(clean_line($_POST['intent'] ?? '', 40));
+$isCareer = $intent === 'career';
 
 if (strlen($name) < 2 || !filter_var($replyTo, FILTER_VALIDATE_EMAIL) || strlen($service) < 2 || strlen($message) < 9) {
   http_response_code(422);
   echo json_encode(['ok' => false, 'error' => 'Please check the brief and try again.']);
   exit;
 }
+if ($isCareer && (strlen($role) < 2 || strlen($phone) < 6 || strlen($timeline) < 2)) {
+  http_response_code(422);
+  echo json_encode(['ok' => false, 'error' => 'Please complete the application fields and try again.']);
+  exit;
+}
 
 $domain = 'recruitexa.com';
-$intent = strtolower(clean_line($_POST['intent'] ?? '', 40));
-$isCareer = $intent === 'career';
 $mailbox = ($isCareer ? 'careers' : 'info') . '@' . $domain;
-$subject = ($isCareer ? 'Recruitexa career — ' : 'Recruitexa brief — ') . $service;
+$subject = ($isCareer ? 'Recruitexa career — ' : 'Recruitexa brief — ') . ($isCareer && $role !== '' ? $role : $service);
 $body = "Name: {$name}\n"
   . "Company / LinkedIn: " . ($company !== '' ? $company : '-') . "\n"
-  . "Email: {$replyTo}\n"
-  . "Regarding: {$service}\n"
-  . "Timeline: " . ($timeline !== '' ? $timeline : '-') . "\n"
+  . "Email: {$replyTo}\n";
+if ($isCareer) {
+  $body .= "Role: {$role}\n"
+    . "Phone: {$phone}\n"
+    . "WhatsApp: " . ($whatsapp !== '' ? $whatsapp : '-') . "\n"
+    . "Experience: " . ($experience !== '' ? $experience : '-') . "\n";
+}
+$body .= "Regarding: {$service}\n"
+  . "Location / timeline: " . ($timeline !== '' ? $timeline : '-') . "\n"
   . "Preferred intro: " . ($intro !== '' ? $intro : '-') . "\n\n"
   . "{$message}\n";
 

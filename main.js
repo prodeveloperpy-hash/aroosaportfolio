@@ -801,9 +801,16 @@
       const checks = [
         ["name", (value) => value.trim().length > 1, "Please add your name."],
         ["email", (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()), "Please add an email that can be answered."],
-        ["service", (value) => value.trim() !== "", isCareer ? "Please choose an area of interest." : "Please choose what you need."],
+        ["service", (value) => value.trim() !== "", isCareer ? "Please choose an area of work." : "Please choose what you need."],
         ["message", (value) => value.trim().length > 8, isCareer ? "A few lines on your work are enough." : "A few lines are enough — what do you need?"]
       ];
+      if (isCareer) {
+        checks.push(
+          ["role", (value) => value.trim() !== "", "Please choose the role you are applying for."],
+          ["phone", (value) => value.trim().length > 5, "Please add a phone number."],
+          ["timeline", (value) => value.trim().length > 1, "Please add your city and timezone."]
+        );
+      }
 
       const problems = [];
       let firstInvalid = null;
@@ -819,15 +826,22 @@
       });
 
       const cv = form.querySelector("[name='cv']");
-      if (cv && cv.files && cv.files[0]) {
-        const file = cv.files[0];
-        const okType = /\.(pdf|docx?)$/i.test(file.name);
+      if (cv) {
+        const file = cv.files && cv.files[0];
         const field = cv.closest(".field");
-        if (!okType || file.size > 4 * 1024 * 1024) {
+        if (isCareer && !file) {
           if (field) field.classList.add("is-invalid");
           cv.setAttribute("aria-invalid", "true");
-          problems.push("Please attach a PDF, DOC, or DOCX file under 4 MB.");
+          problems.push("Please attach your CV as a PDF, DOC, or DOCX file.");
           if (!firstInvalid) firstInvalid = cv;
+        } else if (file) {
+          const okType = /\.(pdf|docx?)$/i.test(file.name);
+          if (!okType || file.size > 4 * 1024 * 1024) {
+            if (field) field.classList.add("is-invalid");
+            cv.setAttribute("aria-invalid", "true");
+            problems.push("Please attach a PDF, DOC, or DOCX file under 4 MB.");
+            if (!firstInvalid) firstInvalid = cv;
+          }
         }
       }
 
@@ -1057,6 +1071,37 @@
 
   const jobsRoot = document.querySelector("[data-jobs]");
   const jobsList = document.querySelector("[data-jobs-list]");
+  const applyForm = document.querySelector("#brief[data-intent='career']");
+  const applyRole = document.querySelector("[data-apply-role]");
+  const applyTitle = document.querySelector("[data-apply-title]");
+
+  const fillRoleOption = (title) => {
+    if (!applyRole || !title) return;
+    const exists = [...applyRole.options].some((opt) => opt.value === title);
+    if (!exists) {
+      const opt = document.createElement("option");
+      opt.value = title;
+      opt.textContent = title;
+      applyRole.append(opt);
+    }
+    applyRole.value = title;
+  };
+
+  const openApply = (job) => {
+    const title = (job && job.title) || "Open application";
+    fillRoleOption(title);
+    if (applyTitle) applyTitle.textContent = `Apply for ${title}`;
+    const note = document.querySelector("#brief textarea[name='message']");
+    if (note && job && job.title && !note.value.trim()) {
+      note.value = `Applying for: ${job.title}. `;
+    }
+    if (applyForm) applyForm.hidden = false;
+    const apply = document.getElementById("apply");
+    if (apply) apply.scrollIntoView({ behavior: "smooth", block: "start" });
+    const name = document.querySelector("#brief [name='name']");
+    if (name) name.focus();
+  };
+
   if (jobsRoot && jobsList) {
     fetch("jobs.php")
       .then((res) => res.json())
@@ -1064,6 +1109,7 @@
         const jobs = (data && data.ok && data.jobs) || [];
         if (!jobs.length) return;
         jobs.forEach((job) => {
+          fillRoleOption(job.title);
           const card = document.createElement("article");
           card.className = "career-job";
           const kicker = document.createElement("p");
@@ -1080,15 +1126,11 @@
           summary.textContent = job.summary || "";
           const link = document.createElement("a");
           link.className = "btn btn-cyan";
-          link.href = `#apply`;
+          link.href = "#apply";
           link.textContent = "Apply";
-          link.addEventListener("click", () => {
-            const note = document.querySelector("#brief textarea[name='message']");
-            const select = document.querySelector("#brief [name='service']");
-            if (select) select.value = "Open application";
-            if (note && job.title && !note.value) {
-              note.value = `Applying for: ${job.title}. `;
-            }
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            openApply(job);
           });
           if (bits.length) card.append(kicker, title, dates, summary, link);
           else card.append(kicker, title, summary, link);

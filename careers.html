@@ -171,8 +171,8 @@
       <div class="wrap contact-wrap">
         <div class="contact-copy">
           <p class="kicker">Apply</p>
-          <h2>A note and a CV are enough.</h2>
-          <p class="contact-lead">Tell me what you do well, the markets you have covered, and a LinkedIn URL if you have one. The application arrives at careers@recruitexa.com.</p>
+          <h2>Apply for a live role, or send an open file.</h2>
+          <p class="contact-lead">Pick the seat, complete the form, and attach a CV. The application arrives at careers@recruitexa.com.</p>
           <div class="contact-channels">
             <a class="channel" href="mailto:careers@recruitexa.com">
               <span class="channel-ic" aria-hidden="true">
@@ -203,25 +203,39 @@
           <form id="brief" action="send.php" method="post" enctype="multipart/form-data" data-intent="career" novalidate>
             <input type="hidden" name="intent" value="career">
             <p class="kicker">Application</p>
-            <h3 class="form-title">Apply to Recruitexa</h3>
+            <h3 class="form-title" data-apply-title>Apply to Recruitexa</h3>
             <div class="form-grid">
+              <label class="field field-wide">
+                <span>Role</span>
+                <select name="role" required data-apply-role>
+                  <option value="" selected disabled>Choose a role</option>
+                  <option value="Open application">Open application</option>
+                </select>
+              </label>
               <label class="field">
                 <span>Name</span>
                 <input name="name" type="text" autocomplete="name" maxlength="120" required placeholder="Your name">
-              </label>
-              <label class="field">
-                <span>LinkedIn URL (optional)</span>
-                <input name="company" type="url" maxlength="160" placeholder="https://www.linkedin.com/in/…">
               </label>
               <label class="field">
                 <span>Email</span>
                 <input name="email" type="email" autocomplete="email" maxlength="160" required placeholder="you@email.com">
               </label>
               <label class="field">
-                <span>Interest</span>
+                <span>Phone</span>
+                <input name="phone" type="tel" maxlength="40" required placeholder="+1 or +92…">
+              </label>
+              <label class="field">
+                <span>WhatsApp (optional)</span>
+                <input name="whatsapp" type="tel" maxlength="40" placeholder="+1 (786) …">
+              </label>
+              <label class="field">
+                <span>LinkedIn URL (optional)</span>
+                <input name="company" type="url" maxlength="160" placeholder="https://www.linkedin.com/in/…">
+              </label>
+              <label class="field">
+                <span>Area of work</span>
                 <select name="service" required>
                   <option value="" selected disabled>Choose an area</option>
-                  <option>Open application</option>
                   <option>Talent sourcing</option>
                   <option>Recruitment operations</option>
                   <option>Research / lead generation</option>
@@ -229,16 +243,20 @@
                 </select>
               </label>
               <label class="field">
-                <span>Location / timezone (optional)</span>
-                <input name="timeline" type="text" maxlength="160" placeholder="City and timezone">
+                <span>Years of experience (optional)</span>
+                <input name="experience" type="text" maxlength="40" placeholder="e.g. 4 years">
+              </label>
+              <label class="field">
+                <span>Location / timezone</span>
+                <input name="timeline" type="text" maxlength="160" required placeholder="City and timezone">
               </label>
               <label class="field">
                 <span>CV (PDF, DOC, DOCX)</span>
-                <input name="cv" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                <input name="cv" type="file" required accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
               </label>
               <label class="field field-wide">
                 <span>Note</span>
-                <textarea name="message" maxlength="4000" required placeholder="A few lines on the markets you have covered and the work you want to do."></textarea>
+                <textarea name="message" maxlength="4000" required placeholder="A few lines on the markets you have covered, tools you use, and why this seat."></textarea>
               </label>
             </div>
             <div class="hp" aria-hidden="true">
@@ -313,6 +331,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=51"></script>
+  <script src="main.js?v=52"></script>
 </body>
 </html>
