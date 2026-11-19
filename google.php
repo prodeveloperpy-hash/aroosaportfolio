@@ -192,14 +192,14 @@ function google_slot_busy(DateTimeImmutable $start, DateTimeImmutable $end, arra
 
 function recruitexa_invite_html($name, $email, $note) {
   $wa = 'https://wa.me/17868877796';
-  $noteHtml = $note !== '' ? '<p>Note: ' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8') . '</p>' : '';
+  $noteHtml = htmlspecialchars($note !== '' ? $note : '—', ENT_QUOTES, 'UTF-8');
   $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
   $safeEmail = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
   return '<div style="font-family:Arial,sans-serif;color:#0A1D3D">'
     . '<p><strong>RECRUITEXA</strong><br><a href="https://recruitexa.com">recruitexa.com</a></p>'
     . '<p><strong>Recruitexa intro call</strong></p>'
     . '<p>Guest: ' . $safeName . ' &lt;' . $safeEmail . '&gt;</p>'
-    . $noteHtml
+    . '<p>Note (optional): ' . $noteHtml . '</p>'
     . '<p>WhatsApp: <a href="' . $wa . '">+1 (786) 887-7796</a><br>'
     . 'Email: <a href="mailto:info@recruitexa.com">info@recruitexa.com</a><br>'
     . 'Web: <a href="https://recruitexa.com">recruitexa.com</a></p>'
@@ -218,10 +218,8 @@ function recruitexa_invite_text($name, $email, $note, $meet = '') {
     '',
     'Intro call with Recruitexa.',
     'Guest: ' . $name . ' <' . $email . '>',
+    'Note (optional): ' . ($note !== '' ? $note : '—'),
   ];
-  if ($note !== '') {
-    $lines[] = 'Note: ' . $note;
-  }
   if ($meet !== '') {
     $lines[] = 'Google Meet: ' . $meet;
   }
