@@ -190,6 +190,59 @@ function google_slot_busy(DateTimeImmutable $start, DateTimeImmutable $end, arra
   return false;
 }
 
+function recruitexa_invite_html($name, $email, $note) {
+  $logo = 'https://recruitexa.com/assets/logo.png';
+  $wa = 'https://wa.me/17868877796';
+  $noteHtml = $note !== '' ? '<p>Note: ' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8') . '</p>' : '';
+  $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+  $safeEmail = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+  return '<div style="font-family:Arial,sans-serif;color:#0A1D3D">'
+    . '<p><img src="' . $logo . '" alt="Recruitexa" width="160"></p>'
+    . '<p><strong>Recruitexa intro call</strong></p>'
+    . '<p>Guest: ' . $safeName . ' &lt;' . $safeEmail . '&gt;</p>'
+    . $noteHtml
+    . '<p>WhatsApp: <a href="' . $wa . '">+1 (786) 887-7796</a><br>'
+    . 'Email: <a href="mailto:info@recruitexa.com">info@recruitexa.com</a><br>'
+    . 'Web: <a href="https://recruitexa.com">recruitexa.com</a></p>'
+    . '<p>────────────────</p>'
+    . '<p><img src="' . $logo . '" alt="Recruitexa" width="120"><br>'
+    . '<strong>Recruitexa</strong><br>'
+    . 'Recruitment · Talent sourcing · Lead generation<br>'
+    . 'WhatsApp <a href="' . $wa . '">+1 (786) 887-7796</a><br>'
+    . '<a href="mailto:info@recruitexa.com">info@recruitexa.com</a> · <a href="https://recruitexa.com">recruitexa.com</a></p>'
+    . '</div>';
+}
+
+function recruitexa_invite_text($name, $email, $note, $meet = '') {
+  $lines = [
+    'RECRUITEXA',
+    'https://recruitexa.com',
+    '',
+    'Intro call with Recruitexa.',
+    'Guest: ' . $name . ' <' . $email . '>',
+  ];
+  if ($note !== '') {
+    $lines[] = 'Note: ' . $note;
+  }
+  if ($meet !== '') {
+    $lines[] = 'Google Meet: ' . $meet;
+  }
+  $lines[] = '';
+  $lines[] = 'WhatsApp: +1 (786) 887-7796';
+  $lines[] = 'https://wa.me/17868877796';
+  $lines[] = 'Email: info@recruitexa.com';
+  $lines[] = 'https://recruitexa.com';
+  $lines[] = '';
+  $lines[] = '—';
+  $lines[] = 'Recruitexa';
+  $lines[] = 'Recruitment · Talent sourcing · Lead generation';
+  $lines[] = 'WhatsApp +1 (786) 887-7796';
+  $lines[] = 'info@recruitexa.com';
+  $lines[] = 'https://recruitexa.com';
+  $lines[] = 'Logo: https://recruitexa.com/assets/logo.png';
+  return implode("\n", $lines);
+}
+
 function google_create_meet(DateTimeImmutable $start, $name, $email, $note) {
   $token = google_token();
   if ($token === '') {
@@ -197,10 +250,7 @@ function google_create_meet(DateTimeImmutable $start, $name, $email, $note) {
   }
   $end = $start->modify('+30 minutes');
   $zone = $start->getTimezone()->getName();
-  $desc = 'Recruitexa intro call.' . "\nGuest: {$name} <{$email}>";
-  if ($note !== '') {
-    $desc .= "\nNote: " . $note;
-  }
+  $desc = recruitexa_invite_html($name, $email, $note);
   $res = google_http(
     'POST',
     'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&sendUpdates=all',

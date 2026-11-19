@@ -167,13 +167,7 @@ function ics_for($start, $name, $email, $note, $meet = '') {
   $utcStart = $start->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
   $utcEnd = $end->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
   $uid = bin2hex(random_bytes(8)) . '@recruitexa.com';
-  $desc = 'Intro call with Recruitexa.\nGuest: ' . $name . ' <' . $email . '>';
-  if ($note !== '') {
-    $desc .= '\nNote: ' . str_replace(["\r", "\n"], ' ', $note);
-  }
-  if ($meet !== '') {
-    $desc .= '\nGoogle Meet: ' . $meet;
-  }
+  $desc = str_replace(["\r", "\n"], '\n', recruitexa_invite_text($name, $email, $note, $meet));
   $lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -205,13 +199,18 @@ function deliver_booking_mail($name, $email, $start, $note, $meet = '') {
   }
   $when = $start->format('l, F j, Y \a\t g:i A T');
   $meetLine = $meet !== '' ? "Google Meet: {$meet}\n" : "Google Meet: not connected yet (open google-connect.php).\n";
-  $body = "A 30-minute intro was booked on recruitexa.com.\n\n"
+  $body = "RECRUITEXA\nhttps://recruitexa.com\n\n"
+    . "A 30-minute intro was booked on recruitexa.com.\n\n"
     . "When: {$when}\n"
     . "Guest: {$name}\n"
     . "Email: {$email}\n"
     . "Note: " . ($note !== '' ? $note : '-') . "\n"
     . $meetLine . "\n"
-    . "Google also sends the calendar invite to the guest when Meet is connected.\n";
+    . "WhatsApp: +1 (786) 887-7796\n"
+    . "https://wa.me/17868877796\n"
+    . "Email: info@recruitexa.com\n\n"
+    . "Google also sends the calendar invite to the guest.\n\n"
+    . "—\nRecruitexa\nWhatsApp +1 (786) 887-7796\ninfo@recruitexa.com\nhttps://recruitexa.com\n";
   $ics = ics_for($start, $name, $email, $note, $meet);
   $host = preg_replace('/[^A-Za-z0-9.-]/', '', gethostname() ?: 'recruitexa.com');
   $messageId = '<' . bin2hex(random_bytes(8)) . '@' . $host . '>';
