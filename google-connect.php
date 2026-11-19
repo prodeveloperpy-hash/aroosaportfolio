@@ -18,8 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['client_id'], $_POST['
   $secret = preg_replace('/\s+/', '', (string)$_POST['client_secret']);
   if ($clientId !== '' && $secret !== '') {
     google_save(['client_id' => $clientId, 'client_secret' => $secret]);
-    $msg = 'API keys saved. Connect the Google Calendar next.';
+    header('Location: google-connect.php?keys=1');
+    exit;
   }
+  $err = 'Paste both the client ID and the client secret from the JSON file, then save.';
 }
 
 if (isset($_GET['code']) && $clientId !== '' && $secret !== '') {
@@ -65,6 +67,10 @@ if (isset($_GET['ok'])) {
   $connected = true;
 }
 
+if (isset($_GET['keys'])) {
+  $msg = 'API keys saved. Connect the Google Calendar next.';
+}
+
 if ((string)($_GET['error'] ?? '') !== '') {
   $err = 'Google access was denied. Use aroosamariam0@gmail.com, then click Continue — not Cancel.';
 }
@@ -100,10 +106,10 @@ if ($clientId !== '') {
     <?php if ($err !== ''): ?><p class="form-note"><?php echo google_h($err); ?></p><?php endif; ?>
     <p class="intro-cal-note">Redirect URI for the OAuth client: <strong><?php echo google_h(google_redirect_uri()); ?></strong></p>
     <?php
-      $needKeys = ($clientId === '' || $secret === '' || isset($_GET['reset']) || str_contains($err, 'invalid_client'));
+      $needKeys = ($clientId === '' || $secret === '' || (isset($_GET['reset']) && !isset($_GET['keys'])) || str_contains($err, 'invalid_client'));
     ?>
     <?php if ($needKeys): ?>
-      <form method="post" class="rx-cal-form" style="display:grid;gap:0.8rem">
+      <form method="post" action="google-connect.php" class="rx-cal-form" style="display:grid;gap:0.8rem">
         <label class="field field-wide"><span>OAuth client ID</span><input name="client_id" required placeholder="....apps.googleusercontent.com" value="<?php echo google_h($clientId); ?>"></label>
         <label class="field field-wide"><span>OAuth client secret</span><input name="client_secret" required placeholder="GOCSPX-..."></label>
         <button class="btn btn-cyan" type="submit">Save API keys</button>
