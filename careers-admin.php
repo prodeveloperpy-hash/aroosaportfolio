@@ -128,7 +128,7 @@ if ($authed && isset($_GET['edit'])) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Careers admin | Recruitexa</title>
-  <link rel="stylesheet" href="styles.css?v=115">
+  <link rel="stylesheet" href="styles.css?v=116">
 </head>
 <body>
   <main class="wrap intro-cal" style="margin-top:2rem;max-width:40rem">
@@ -173,7 +173,7 @@ if ($authed && isset($_GET['edit'])) {
               </div>
             <?php endforeach; ?>
           </div>
-          <button class="btn btn-ghost" type="button" data-q-add style="margin-top:0.6rem">Add question</button>
+          <button class="job-q-add" type="button" data-q-add>+ Add another question</button>
         </div>
         <label class="job-q-check field-wide"><input type="checkbox" name="open" value="1" <?php echo empty($edit) || !empty($edit['open']) ? 'checked' : ''; ?>> Show on the careers page</label>
         <button class="btn btn-cyan" type="submit"><?php echo $edit ? 'Update role' : 'Post role'; ?></button>
