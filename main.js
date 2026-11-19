@@ -1010,9 +1010,16 @@
         setNote("Pick a time first.");
         return;
       }
+      const service = (form.service && form.service.value) ? form.service.value.trim() : "";
+      if (!service) {
+        setNote("Choose the service this intro is for.");
+        if (form.service) form.service.focus();
+        return;
+      }
       const body = {
         name: form.name.value.trim(),
         email: form.email.value.trim(),
+        service,
         note: form.note.value.trim(),
         start: selectedStart,
         website: form.website.value,

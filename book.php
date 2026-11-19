@@ -162,12 +162,25 @@ function valid_generated_slot(DateTimeImmutable $start, array $taken, array $bus
   return false;
 }
 
-function ics_for($start, $name, $email, $note, $meet = '') {
+function book_services() {
+  return [
+    'Recruitment',
+    'Talent Sourcing & Executive Search',
+    'B2B Lead Generation',
+    'Reverse Recruitment',
+    'CV Formatting & Optimization',
+    'Monthly Retainer',
+    'Pipeline',
+    'Not sure yet, please advise',
+  ];
+}
+
+function ics_for($start, $name, $email, $note, $meet = '', $service = '') {
   $end = $start->modify('+' . BOOK_DURATION . ' minutes');
   $utcStart = $start->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
   $utcEnd = $end->setTimezone(new DateTimeZone('UTC'))->format('Ymd\THis\Z');
   $uid = bin2hex(random_bytes(8)) . '@recruitexa.com';
-  $desc = str_replace(["\r", "\n"], '\n', recruitexa_invite_text($name, $email, $note, $meet));
+  $desc = str_replace(["\r", "\n"], '\n', recruitexa_invite_text($name, $email, $note, $meet, $service));
   $lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -190,7 +203,7 @@ function ics_for($start, $name, $email, $note, $meet = '') {
   return implode("\r\n", $lines) . "\r\n";
 }
 
-function deliver_booking_mail($name, $email, $start, $note, $meet = '') {
+function deliver_booking_mail($name, $email, $start, $note, $meet = '', $service = '') {
   $home = book_home();
   $newDir = $home . '/mail/recruitexa.com/info/new';
   $tmpDir = $home . '/mail/recruitexa.com/info/tmp';
@@ -204,14 +217,15 @@ function deliver_booking_mail($name, $email, $start, $note, $meet = '') {
     . "When: {$when}\n"
     . "Guest: {$name}\n"
     . "Email: {$email}\n"
-    . "Note: " . ($note !== '' ? $note : '-') . "\n"
+    . "Service: " . ($service !== '' ? $service : '-') . "\n"
+    . "Note (optional): " . ($note !== '' ? $note : '-') . "\n"
     . $meetLine . "\n"
     . "WhatsApp: +1 (786) 887-7796\n"
     . "https://wa.me/17868877796\n"
     . "Email: info@recruitexa.com\n\n"
     . "Google also sends the calendar invite to the guest.\n\n"
     . "—\nRecruitexa\nWhatsApp +1 (786) 887-7796\ninfo@recruitexa.com\nhttps://recruitexa.com\n";
-  $ics = ics_for($start, $name, $email, $note, $meet);
+  $ics = ics_for($start, $name, $email, $note, $meet, $service);
   $host = preg_replace('/[^A-Za-z0-9.-]/', '', gethostname() ?: 'recruitexa.com');
   $messageId = '<' . bin2hex(random_bytes(8)) . '@' . $host . '>';
   $boundary = 'rx' . bin2hex(random_bytes(12));
@@ -301,12 +315,17 @@ if (trim((string)($payload['website'] ?? '')) !== '') {
 
 $name = book_clean($payload['name'] ?? '', 120);
 $email = book_clean($payload['email'] ?? '', 160);
+$service = book_clean($payload['service'] ?? '', 80);
 $note = book_clean($payload['note'] ?? '', 800);
 $start = parse_slot($payload['start'] ?? '');
 
-if (strlen($name) < 2 || !filter_var($email, FILTER_VALIDATE_EMAIL) || !$start) {
+if (!in_array($service, book_services(), true)) {
+  $service = '';
+}
+
+if (strlen($name) < 2 || !filter_var($email, FILTER_VALIDATE_EMAIL) || !$start || $service === '') {
   http_response_code(422);
-  echo json_encode(['ok' => false, 'error' => 'Please add your name, email, and a time.']);
+  echo json_encode(['ok' => false, 'error' => 'Please add your name, email, a service, and a time.']);
   exit;
 }
 
@@ -338,6 +357,7 @@ $row = [
   'start' => slot_iso($start),
   'name' => $name,
   'email' => $email,
+  'service' => $service,
   'note' => $note,
   'meet' => '',
   'created' => gmdate('c'),
@@ -357,14 +377,14 @@ if (!save_bookings($rows)) {
 flock($lock, LOCK_UN);
 fclose($lock);
 
-$meetEvent = google_create_meet($start, $name, $email, $note);
+$meetEvent = google_create_meet($start, $name, $email, $note, $service);
 $meet = (string)($meetEvent['meet'] ?? '');
 if ($meet !== '') {
   $rows[array_key_last($rows)]['meet'] = $meet;
   save_bookings($rows);
 }
 
-deliver_booking_mail($name, $email, $start, $note, $meet);
+deliver_booking_mail($name, $email, $start, $note, $meet, $service);
 
 echo json_encode([
   'ok' => true,

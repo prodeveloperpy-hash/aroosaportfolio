@@ -224,7 +224,20 @@
           <form class="rx-cal-form" data-cal-form hidden>
             <label class="field"><span>Name</span><input name="name" type="text" maxlength="120" required autocomplete="name" placeholder="Your name"></label>
             <label class="field"><span>Email</span><input name="email" type="email" maxlength="160" required autocomplete="email" placeholder="you@company.com"></label>
-            <label class="field field-wide"><span>Note (optional)</span><textarea name="note" maxlength="800" rows="3" placeholder="What should we cover on the call?"></textarea></label>
+            <label class="field field-wide"><span>Service</span>
+              <select name="service" required>
+                <option value="" selected disabled>What is this intro for?</option>
+                <option>Recruitment</option>
+                <option>Talent Sourcing &amp; Executive Search</option>
+                <option>B2B Lead Generation</option>
+                <option>Reverse Recruitment</option>
+                <option>CV Formatting &amp; Optimization</option>
+                <option>Monthly Retainer</option>
+                <option>Pipeline</option>
+                <option>Not sure yet, please advise</option>
+              </select>
+            </label>
+            <label class="field field-wide"><span>Note (optional)</span><textarea name="note" maxlength="800" rows="3" placeholder="A few lines on the role, volume, timeline, or what you want from this call."></textarea></label>
             <div class="hp" aria-hidden="true"><label>Leave this blank<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
             <button class="btn btn-cyan" type="submit">Confirm booking</button>
           </form>
@@ -290,6 +303,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=48"></script>
+  <script src="main.js?v=49"></script>
 </body>
 </html>
