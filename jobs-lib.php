@@ -57,17 +57,41 @@ function jobs_clean($value, $max) {
   return function_exists('mb_substr') ? mb_substr($value, 0, $max) : substr($value, 0, $max);
 }
 
+function jobs_date($value) {
+  $value = jobs_clean($value, 10);
+  return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) ? $value : '';
+}
+
+function jobs_is_live(array $job) {
+  if (empty($job['open'])) {
+    return false;
+  }
+  $today = gmdate('Y-m-d');
+  $opens = (string)($job['opens'] ?? '');
+  $closes = (string)($job['closes'] ?? '');
+  if ($opens !== '' && $opens > $today) {
+    return false;
+  }
+  if ($closes !== '' && $closes < $today) {
+    return false;
+  }
+  return true;
+}
+
 function jobs_public() {
   $open = [];
   foreach (jobs_load()['jobs'] as $job) {
-    if (!empty($job['open'])) {
-      $open[] = [
-        'id' => (string)($job['id'] ?? ''),
-        'title' => (string)($job['title'] ?? ''),
-        'type' => (string)($job['type'] ?? 'Remote'),
-        'summary' => (string)($job['summary'] ?? ''),
-      ];
+    if (!jobs_is_live($job)) {
+      continue;
     }
+    $open[] = [
+      'id' => (string)($job['id'] ?? ''),
+      'title' => (string)($job['title'] ?? ''),
+      'type' => (string)($job['type'] ?? 'Remote'),
+      'summary' => (string)($job['summary'] ?? ''),
+      'opens' => (string)($job['opens'] ?? ''),
+      'closes' => (string)($job['closes'] ?? ''),
+    ];
   }
   return $open;
 }

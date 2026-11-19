@@ -1071,6 +1071,11 @@
           kicker.textContent = job.type || "Remote";
           const title = document.createElement("h3");
           title.textContent = job.title || "Role";
+          const dates = document.createElement("p");
+          const bits = [];
+          if (job.opens) bits.push(`Opened ${job.opens}`);
+          if (job.closes) bits.push(`Closes ${job.closes}`);
+          dates.textContent = bits.join(" · ");
           const summary = document.createElement("p");
           summary.textContent = job.summary || "";
           const link = document.createElement("a");
@@ -1085,7 +1090,8 @@
               note.value = `Applying for: ${job.title}. `;
             }
           });
-          card.append(kicker, title, summary, link);
+          if (bits.length) card.append(kicker, title, dates, summary, link);
+          else card.append(kicker, title, summary, link);
           jobsList.append(card);
         });
         jobsRoot.hidden = false;

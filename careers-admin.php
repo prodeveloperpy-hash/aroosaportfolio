@@ -51,28 +51,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = jobs_clean($_POST['title'] ?? '', 120);
     $type = jobs_clean($_POST['type'] ?? '', 80);
     $summary = jobs_clean($_POST['summary'] ?? '', 600);
+    $opens = jobs_date($_POST['opens'] ?? '');
+    $closes = jobs_date($_POST['closes'] ?? '');
     $open = isset($_POST['open']);
     if ($title === '' || $summary === '') {
       $err = 'Add a title and a short summary.';
+    } elseif ($opens !== '' && $closes !== '' && $closes < $opens) {
+      $err = 'Closing date must be on or after the opening date.';
     } else {
+      $row = [
+        'title' => $title,
+        'type' => $type !== '' ? $type : 'Remote',
+        'summary' => $summary,
+        'opens' => $opens,
+        'closes' => $closes,
+        'open' => $open,
+      ];
       if ($id === '') {
-        $id = bin2hex(random_bytes(6));
-        $store['jobs'][] = [
-          'id' => $id,
-          'title' => $title,
-          'type' => $type !== '' ? $type : 'Remote',
-          'summary' => $summary,
-          'open' => $open,
-          'created' => gmdate('c'),
-        ];
+        $row['id'] = bin2hex(random_bytes(6));
+        $row['created'] = gmdate('c');
+        $store['jobs'][] = $row;
         $msg = 'Role posted on the careers page.';
       } else {
         foreach ($store['jobs'] as &$job) {
           if (($job['id'] ?? '') === $id) {
-            $job['title'] = $title;
-            $job['type'] = $type !== '' ? $type : 'Remote';
-            $job['summary'] = $summary;
-            $job['open'] = $open;
+            $job = array_merge($job, $row);
             $msg = 'Role updated.';
             break;
           }
@@ -151,8 +154,10 @@ if ($authed && isset($_GET['edit'])) {
         <input type="hidden" name="id" value="<?php echo jobs_h($edit['id'] ?? ''); ?>">
         <label class="field field-wide"><span>Role title</span><input name="title" required maxlength="120" value="<?php echo jobs_h($edit['title'] ?? ''); ?>" placeholder="Talent sourcer"></label>
         <label class="field field-wide"><span>Type</span><input name="type" maxlength="80" value="<?php echo jobs_h($edit['type'] ?? 'Remote'); ?>" placeholder="Remote · contract"></label>
+        <label class="field"><span>Opening date</span><input name="opens" type="date" value="<?php echo jobs_h($edit['opens'] ?? ''); ?>"></label>
+        <label class="field"><span>Closing date (optional)</span><input name="closes" type="date" value="<?php echo jobs_h($edit['closes'] ?? ''); ?>"></label>
         <label class="field field-wide"><span>Summary</span><textarea name="summary" required maxlength="600" rows="4" placeholder="What the seat does, and who should apply."><?php echo jobs_h($edit['summary'] ?? ''); ?></textarea></label>
-        <label class="field field-wide" style="flex-direction:row;align-items:center;gap:0.5rem"><input type="checkbox" name="open" value="1" <?php echo empty($edit) || !empty($edit['open']) ? 'checked' : ''; ?>> Show on the careers page</label>
+        <label class="field field-wide" style="flex-direction:row;align-items:center;gap:0.5rem"><input type="checkbox" name="open" value="1" <?php echo empty($edit) || !empty($edit['open']) ? 'checked' : ''; ?>> Show on the careers page (after the opening date)</label>
         <button class="btn btn-cyan" type="submit"><?php echo $edit ? 'Update role' : 'Post role'; ?></button>
       </form>
       <?php if (!$store['jobs']): ?>
@@ -161,16 +166,29 @@ if ($authed && isset($_GET['edit'])) {
         <div class="career-jobs">
           <?php foreach ($store['jobs'] as $job): ?>
             <article class="career-job">
-              <p class="kicker"><?php echo !empty($job['open']) ? 'Live' : 'Hidden'; ?></p>
+              <p class="kicker"><?php echo jobs_is_live($job) ? 'Live' : 'Hidden'; ?></p>
               <h3><?php echo jobs_h($job['title'] ?? ''); ?></h3>
               <p><?php echo jobs_h($job['type'] ?? ''); ?></p>
+              <p><?php
+                $opens = (string)($job['opens'] ?? '');
+                $closes = (string)($job['closes'] ?? '');
+                echo 'Opens: ' . jobs_h($opens !== '' ? $opens : 'now');
+                if ($closes !== '') {
+                  echo ' · Closes: ' . jobs_h($closes);
+                }
+              ?></p>
               <p><?php echo jobs_h($job['summary'] ?? ''); ?></p>
-              <form method="post" style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem">
-                <input type="hidden" name="id" value="<?php echo jobs_h($job['id'] ?? ''); ?>">
-                <button class="btn btn-ghost" name="action" value="toggle" type="submit"><?php echo !empty($job['open']) ? 'Hide' : 'Publish'; ?></button>
+              <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem">
+                <form method="post">
+                  <input type="hidden" name="id" value="<?php echo jobs_h($job['id'] ?? ''); ?>">
+                  <button class="btn btn-ghost" name="action" value="toggle" type="submit"><?php echo !empty($job['open']) ? 'Hide' : 'Publish'; ?></button>
+                </form>
                 <a class="btn btn-ghost" href="careers-admin.php?edit=<?php echo jobs_h($job['id'] ?? ''); ?>">Edit</a>
-                <button class="btn btn-ghost" name="action" value="delete" type="submit" onclick="return confirm('Remove this role?')">Delete</button>
-              </form>
+                <form method="post" onsubmit="return confirm('Delete this role from Careers?')">
+                  <input type="hidden" name="id" value="<?php echo jobs_h($job['id'] ?? ''); ?>">
+                  <button class="btn btn-cyan" name="action" value="delete" type="submit">Delete</button>
+                </form>
+              </div>
             </article>
           <?php endforeach; ?>
         </div>
