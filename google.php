@@ -190,23 +190,13 @@ function google_slot_busy(DateTimeImmutable $start, DateTimeImmutable $end, arra
   return false;
 }
 
-function recruitexa_logo_src() {
-  $path = __DIR__ . '/assets/invite-logo.jpg';
-  if (is_readable($path)) {
-    return 'data:image/jpeg;base64,' . base64_encode((string)file_get_contents($path));
-  }
-  return 'https://recruitexa.com/assets/invite-logo.jpg';
-}
-
 function recruitexa_invite_html($name, $email, $note) {
-  $logo = recruitexa_logo_src();
   $wa = 'https://wa.me/17868877796';
   $noteHtml = $note !== '' ? '<p>Note: ' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8') . '</p>' : '';
   $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
   $safeEmail = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
-  $mark = '<a href="https://recruitexa.com"><img src="' . $logo . '" alt="Recruitexa" width="96" height="96" style="display:block;border:0;width:96px;height:96px"></a>';
   return '<div style="font-family:Arial,sans-serif;color:#0A1D3D">'
-    . $mark
+    . '<p><strong>RECRUITEXA</strong><br><a href="https://recruitexa.com">recruitexa.com</a></p>'
     . '<p><strong>Recruitexa intro call</strong></p>'
     . '<p>Guest: ' . $safeName . ' &lt;' . $safeEmail . '&gt;</p>'
     . $noteHtml
