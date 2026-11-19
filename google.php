@@ -28,18 +28,22 @@ function google_store_path() {
 
 function google_load() {
   $data = [];
-  $local = __DIR__ . '/google-config.php';
-  if (is_readable($local)) {
-    $loaded = include $local;
-    if (is_array($loaded)) {
-      $data = $loaded;
-    }
-  }
   $path = google_store_path();
   if (is_readable($path)) {
     $raw = json_decode((string)file_get_contents($path), true);
     if (is_array($raw)) {
-      $data = array_merge($data, $raw);
+      $data = $raw;
+    }
+  }
+  $local = __DIR__ . '/google-config.php';
+  if (is_readable($local)) {
+    $loaded = include $local;
+    if (is_array($loaded)) {
+      foreach (['client_id', 'client_secret'] as $key) {
+        if (!empty($loaded[$key])) {
+          $data[$key] = preg_replace('/\s+/', '', (string)$loaded[$key]);
+        }
+      }
     }
   }
   return $data;
