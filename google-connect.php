@@ -35,7 +35,15 @@ if (isset($_GET['code']) && $clientId !== '' && $secret !== '') {
   $newRefresh = (string)($res['json']['refresh_token'] ?? '');
   $access = (string)($res['json']['access_token'] ?? '');
   if ($access === '') {
-    $err = 'Google did not return a token. Check the redirect URI and try Connect again.';
+    $detail = trim((string)($res['json']['error'] ?? '') . ' ' . (string)($res['json']['error_description'] ?? ''));
+    if ($detail === '' && (string)($res['curl'] ?? '') !== '') {
+      $detail = (string)$res['curl'];
+    }
+    if ($detail === '' && (int)($res['code'] ?? 0) > 0) {
+      $detail = 'HTTP ' . (int)$res['code'];
+    }
+    $err = 'Google did not return a token. Connect again.'
+      . ($detail !== '' ? ' (' . $detail . ')' : '');
   } else {
     $save = [
       'access_token' => $access,
@@ -57,6 +65,10 @@ if (isset($_GET['ok'])) {
   $connected = true;
 }
 
+if ((string)($_GET['error'] ?? '') !== '') {
+  $err = 'Google access was denied. Use aroosamariam0@gmail.com, then click Continue — not Cancel.';
+}
+
 $authUrl = '';
 if ($clientId !== '') {
   $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query([
@@ -67,6 +79,7 @@ if ($clientId !== '') {
     'access_type' => 'offline',
     'prompt' => 'consent',
     'include_granted_scopes' => 'true',
+    'login_hint' => 'aroosamariam0@gmail.com',
   ]);
 }
 ?>

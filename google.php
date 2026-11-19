@@ -58,17 +58,7 @@ function google_save(array $data) {
 }
 
 function google_redirect_uri() {
-  $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-    || ((string)($_SERVER['SERVER_PORT'] ?? '') === '443')
-    || ((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
-  $host = strtolower((string)($_SERVER['HTTP_HOST'] ?? 'recruitexa.com'));
-  $host = preg_replace('/:\d+$/', '', $host);
-  if ($host === '' || $host === 'localhost' || str_starts_with($host, '127.')) {
-    $host = 'recruitexa.com';
-    $https = true;
-  }
-  $scheme = $https ? 'https' : 'http';
-  return $scheme . '://' . $host . '/google-connect.php';
+  return 'https://recruitexa.com/google-connect.php';
 }
 
 function google_http($method, $url, $headers = [], $body = null) {
@@ -79,20 +69,35 @@ function google_http($method, $url, $headers = [], $body = null) {
   if ($body !== null && !preg_grep('/^content-type:/i', $headerLines)) {
     $headerLines[] = 'Content-Type: application/json';
   }
+  $payload = null;
+  if ($body !== null) {
+    $payload = is_string($body) ? $body : json_encode($body);
+  }
   if (function_exists('curl_init')) {
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headerLines);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
-    if ($body !== null) {
-      curl_setopt($ch, CURLOPT_POSTFIELDS, is_string($body) ? $body : json_encode($body));
+    curl_setopt($ch, CURLOPT_TIMEOUT, 25);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+    if (strtoupper($method) === 'POST') {
+      curl_setopt($ch, CURLOPT_POST, true);
+    } else {
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+    }
+    if ($payload !== null) {
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     }
     $raw = curl_exec($ch);
+    $curlErr = curl_error($ch);
     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     $json = json_decode((string)$raw, true);
-    return ['code' => $code, 'json' => is_array($json) ? $json : [], 'raw' => (string)$raw];
+    return [
+      'code' => $code,
+      'json' => is_array($json) ? $json : [],
+      'raw' => (string)$raw,
+      'curl' => (string)$curlErr,
+    ];
   }
   $opts = [
     'http' => [
@@ -111,7 +116,7 @@ function google_http($method, $url, $headers = [], $body = null) {
     $code = (int)$m[1];
   }
   $json = json_decode((string)$raw, true);
-  return ['code' => $code, 'json' => is_array($json) ? $json : [], 'raw' => (string)$raw];
+  return ['code' => $code, 'json' => is_array($json) ? $json : [], 'raw' => (string)$raw, 'curl' => ''];
 }
 
 function google_token() {
