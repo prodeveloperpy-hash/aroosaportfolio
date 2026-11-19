@@ -72,7 +72,7 @@ if (isset($_GET['keys'])) {
 }
 
 if ((string)($_GET['error'] ?? '') !== '') {
-  $err = 'Google access was denied. Use aroosamariam0@gmail.com, then click Continue — not Cancel.';
+  $err = 'Google access was denied. Use info@recruitexa.com, then click Continue — not Cancel.';
 }
 
 $authUrl = '';
@@ -85,7 +85,7 @@ if ($clientId !== '') {
     'access_type' => 'offline',
     'prompt' => 'consent',
     'include_granted_scopes' => 'true',
-    'login_hint' => 'aroosamariam0@gmail.com',
+    'login_hint' => 'info@recruitexa.com',
   ]);
 }
 ?>
