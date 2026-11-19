@@ -6718,6 +6718,27 @@ main .score-bar i { animation: barGlint 4s ease-in-out infinite; }
 }
 .career-job p { margin: 0; color: #5c6570; }
 .career-job .btn { margin-top: 0.9rem; }
+.career-job .apply-needs { margin: 0.7rem 0 0; }
+.apply-needs {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: rgba(10, 29, 61, 0.05);
+  border: 1px solid rgba(10, 29, 61, 0.08);
+}
+.apply-needs p {
+  margin: 0 0 0.45rem;
+  color: #0A1D3D;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+.apply-needs ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #5c6570;
+}
+.apply-needs li { margin: 0.2rem 0; }
+.apply-extra { display: contents; }
 
 @media (prefers-reduced-motion: reduce) {
   .aurora span,

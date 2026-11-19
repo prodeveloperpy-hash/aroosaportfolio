@@ -62,6 +62,51 @@ function jobs_date($value) {
   return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) ? $value : '';
 }
 
+function jobs_lines($value, $maxLines = 12, $maxEach = 180) {
+  $lines = preg_split('/\r\n|\r|\n/', (string)$value);
+  $out = [];
+  foreach ($lines as $line) {
+    $line = jobs_clean($line, $maxEach);
+    if ($line === '') {
+      continue;
+    }
+    $out[] = $line;
+    if (count($out) >= $maxLines) {
+      break;
+    }
+  }
+  return $out;
+}
+
+function jobs_questions_from_post() {
+  $out = [];
+  for ($i = 1; $i <= 6; $i++) {
+    $label = jobs_clean($_POST['q' . $i] ?? '', 160);
+    if ($label === '') {
+      continue;
+    }
+    $out[] = [
+      'id' => 'q' . $i,
+      'label' => $label,
+      'required' => isset($_POST['q' . $i . '_req']),
+    ];
+  }
+  return $out;
+}
+
+function jobs_find_live($id) {
+  $id = jobs_clean($id, 32);
+  if ($id === '') {
+    return null;
+  }
+  foreach (jobs_load()['jobs'] as $job) {
+    if (($job['id'] ?? '') === $id && jobs_is_live($job)) {
+      return $job;
+    }
+  }
+  return null;
+}
+
 function jobs_today() {
   return (new DateTimeImmutable('now', new DateTimeZone('Asia/Karachi')))->format('Y-m-d');
 }
@@ -90,6 +135,18 @@ function jobs_public() {
       'summary' => (string)($job['summary'] ?? ''),
       'opens' => (string)($job['opens'] ?? ''),
       'closes' => (string)($job['closes'] ?? ''),
+      'needs' => array_values(array_filter((array)($job['needs'] ?? []), 'is_string')),
+      'questions' => array_values(array_filter(array_map(static function ($q) {
+        if (!is_array($q)) {
+          return null;
+        }
+        $label = jobs_clean($q['label'] ?? '', 160);
+        $id = jobs_clean($q['id'] ?? '', 12);
+        if ($label === '' || $id === '') {
+          return null;
+        }
+        return ['id' => $id, 'label' => $label, 'required' => !empty($q['required'])];
+      }, (array)($job['questions'] ?? [])))),
     ];
   }
   return $open;

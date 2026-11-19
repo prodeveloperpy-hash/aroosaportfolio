@@ -810,14 +810,24 @@
           ["phone", (value) => value.trim().length > 5, "Please add a phone number."],
           ["timeline", (value) => value.trim().length > 1, "Please add your city and timezone."]
         );
+        form.querySelectorAll("[data-apply-q]").forEach((control) => {
+          if (!control.required) return;
+          checks.push([
+            control.name,
+            (value) => value.trim().length > 1,
+            `Please answer: ${control.closest(".field")?.querySelector("span")?.textContent || "this question"}.`
+          ]);
+        });
       }
 
       const problems = [];
       let firstInvalid = null;
 
       checks.forEach(([name, test, message]) => {
-        const control = form.querySelector(`[name='${name}']`);
+        const control = form.elements[name] || form.querySelector(`[name="${String(name).replace(/"/g, "")}"]`);
+        if (!control) return;
         const field = control.closest(".field");
+        if (!field) return;
         if (test(control.value)) return;
         field.classList.add("is-invalid");
         control.setAttribute("aria-invalid", "true");
@@ -1074,33 +1084,94 @@
   const applyForm = document.querySelector("#brief[data-intent='career']");
   const applyRole = document.querySelector("[data-apply-role]");
   const applyTitle = document.querySelector("[data-apply-title]");
+  const applyJobId = document.querySelector("[data-apply-job]");
+  const applyNeeds = document.querySelector("[data-apply-needs]");
+  const applyExtra = document.querySelector("[data-apply-extra]");
+  const liveJobs = [];
 
-  const fillRoleOption = (title) => {
+  const fillRoleOption = (title, id, selectIt) => {
     if (!applyRole || !title) return;
-    const exists = [...applyRole.options].some((opt) => opt.value === title);
-    if (!exists) {
-      const opt = document.createElement("option");
+    let opt = [...applyRole.options].find((item) => item.value === title);
+    if (!opt) {
+      opt = document.createElement("option");
       opt.value = title;
       opt.textContent = title;
       applyRole.append(opt);
     }
-    applyRole.value = title;
+    if (id) opt.dataset.jobId = id;
+    if (selectIt) applyRole.value = title;
   };
 
-  const openApply = (job) => {
+  const renderNeeds = (job) => {
+    if (!applyNeeds) return;
+    applyNeeds.replaceChildren();
+    const needs = (job && Array.isArray(job.needs)) ? job.needs.filter(Boolean) : [];
+    if (!needs.length) {
+      applyNeeds.hidden = true;
+      return;
+    }
+    const heading = document.createElement("p");
+    heading.textContent = `To apply for ${job.title} you need:`;
+    const list = document.createElement("ul");
+    needs.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      list.append(li);
+    });
+    applyNeeds.append(heading, list);
+    applyNeeds.hidden = false;
+  };
+
+  const renderQuestions = (job) => {
+    if (!applyExtra) return;
+    applyExtra.replaceChildren();
+    const questions = (job && Array.isArray(job.questions)) ? job.questions : [];
+    questions.forEach((q) => {
+      if (!q || !q.id || !q.label) return;
+      const label = document.createElement("label");
+      label.className = "field field-wide";
+      const span = document.createElement("span");
+      span.textContent = q.required ? q.label : `${q.label} (optional)`;
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = `apply_q[${q.id}]`;
+      input.maxLength = 400;
+      input.dataset.applyQ = "1";
+      if (q.required) input.required = true;
+      label.append(span, input);
+      applyExtra.append(label);
+    });
+  };
+
+  const setApplyJob = (job) => {
     const title = (job && job.title) || "Open application";
-    fillRoleOption(title);
+    fillRoleOption(title, job && job.id, true);
+    if (applyJobId) applyJobId.value = (job && job.id) || "";
     if (applyTitle) applyTitle.textContent = `Apply for ${title}`;
+    renderNeeds(job);
+    renderQuestions(job);
     const note = document.querySelector("#brief textarea[name='message']");
     if (note && job && job.title && !note.value.trim()) {
       note.value = `Applying for: ${job.title}. `;
     }
+  };
+
+  const openApply = (job) => {
+    setApplyJob(job);
     if (applyForm) applyForm.hidden = false;
     const apply = document.getElementById("apply");
     if (apply) apply.scrollIntoView({ behavior: "smooth", block: "start" });
     const name = document.querySelector("#brief [name='name']");
     if (name) name.focus();
   };
+
+  if (applyRole) {
+    applyRole.addEventListener("change", () => {
+      const title = applyRole.value;
+      const job = liveJobs.find((item) => item.title === title);
+      setApplyJob(job || { title: title || "Open application" });
+    });
+  }
 
   if (jobsRoot && jobsList) {
     fetch("jobs.php")
@@ -1109,14 +1180,15 @@
         const jobs = (data && data.ok && data.jobs) || [];
         if (!jobs.length) return;
         jobs.forEach((job) => {
-          fillRoleOption(job.title);
+          liveJobs.push(job);
+          fillRoleOption(job.title, job.id, false);
           const card = document.createElement("article");
           card.className = "career-job";
           const kicker = document.createElement("p");
           kicker.className = "kicker";
           kicker.textContent = job.type || "Remote";
-          const title = document.createElement("h3");
-          title.textContent = job.title || "Role";
+          const heading = document.createElement("h3");
+          heading.textContent = job.title || "Role";
           const dates = document.createElement("p");
           const bits = [];
           if (job.opens) bits.push(`Opened ${job.opens}`);
@@ -1132,8 +1204,24 @@
             event.preventDefault();
             openApply(job);
           });
-          if (bits.length) card.append(kicker, title, dates, summary, link);
-          else card.append(kicker, title, summary, link);
+          card.append(kicker, heading);
+          if (bits.length) card.append(dates);
+          card.append(summary);
+          if (Array.isArray(job.needs) && job.needs.length) {
+            const needBox = document.createElement("div");
+            needBox.className = "apply-needs";
+            const needTitle = document.createElement("p");
+            needTitle.textContent = "To apply you need:";
+            const list = document.createElement("ul");
+            job.needs.forEach((item) => {
+              const li = document.createElement("li");
+              li.textContent = item;
+              list.append(li);
+            });
+            needBox.append(needTitle, list);
+            card.append(needBox);
+          }
+          card.append(link);
           jobsList.append(card);
         });
         jobsRoot.hidden = false;

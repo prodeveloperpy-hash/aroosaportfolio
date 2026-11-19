@@ -54,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $opens = jobs_date($_POST['opens'] ?? '');
     $closes = jobs_date($_POST['closes'] ?? '');
     $open = isset($_POST['open']);
+    $needs = jobs_lines($_POST['needs'] ?? '');
+    $questions = jobs_questions_from_post();
     if ($title === '' || $summary === '') {
       $err = 'Add a title and a short summary.';
     } elseif ($opens !== '' && $closes !== '' && $closes < $opens) {
@@ -66,6 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'opens' => $opens,
         'closes' => $closes,
         'open' => $open,
+        'needs' => $needs,
+        'questions' => $questions,
       ];
       if ($id === '') {
         $row['id'] = bin2hex(random_bytes(6));
@@ -124,7 +128,7 @@ if ($authed && isset($_GET['edit'])) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Careers admin | Recruitexa</title>
-  <link rel="stylesheet" href="styles.css?v=113">
+  <link rel="stylesheet" href="styles.css?v=114">
 </head>
 <body>
   <main class="wrap intro-cal" style="margin-top:2rem;max-width:40rem">
@@ -157,6 +161,22 @@ if ($authed && isset($_GET['edit'])) {
         <label class="field"><span>Opening date</span><input name="opens" type="date" value="<?php echo jobs_h($edit['opens'] ?? ''); ?>"></label>
         <label class="field"><span>Closing date (optional)</span><input name="closes" type="date" value="<?php echo jobs_h($edit['closes'] ?? ''); ?>"></label>
         <label class="field field-wide"><span>Summary</span><textarea name="summary" required maxlength="600" rows="4" placeholder="What the seat does, and who should apply."><?php echo jobs_h($edit['summary'] ?? ''); ?></textarea></label>
+        <label class="field field-wide"><span>To apply for this role you need (one per line)</span><textarea name="needs" maxlength="1200" rows="4" placeholder="US hours overlap&#10;2+ years talent sourcing&#10;Fluent English"><?php echo jobs_h(implode("\n", (array)($edit['needs'] ?? []))); ?></textarea></label>
+        <p class="intro-cal-note" style="margin:0">Extra questions become extra fields on that job’s apply form. Leave a row blank to skip it.</p>
+        <?php
+          $qs = (array)($edit['questions'] ?? []);
+          $byId = [];
+          foreach ($qs as $q) {
+            if (!empty($q['id'])) $byId[$q['id']] = $q;
+          }
+          for ($i = 1; $i <= 6; $i++):
+            $q = $byId['q' . $i] ?? ($qs[$i - 1] ?? []);
+        ?>
+        <div class="field field-wide" style="display:grid;grid-template-columns:1fr auto;gap:0.6rem;align-items:end">
+          <label><span>Extra question <?php echo $i; ?></span><input name="q<?php echo $i; ?>" maxlength="160" value="<?php echo jobs_h($q['label'] ?? ''); ?>" placeholder="<?php echo $i === 1 ? 'Which ATS have you used?' : ''; ?>"></label>
+          <label style="flex-direction:row;align-items:center;gap:0.4rem;padding-bottom:0.55rem"><input type="checkbox" name="q<?php echo $i; ?>_req" value="1" <?php echo !empty($q['required']) ? 'checked' : ''; ?>> Required</label>
+        </div>
+        <?php endfor; ?>
         <label class="field field-wide" style="flex-direction:row;align-items:center;gap:0.5rem"><input type="checkbox" name="open" value="1" <?php echo empty($edit) || !empty($edit['open']) ? 'checked' : ''; ?>> Show on the careers page (after the opening date)</label>
         <button class="btn btn-cyan" type="submit"><?php echo $edit ? 'Update role' : 'Post role'; ?></button>
       </form>
@@ -178,6 +198,14 @@ if ($authed && isset($_GET['edit'])) {
                 }
               ?></p>
               <p><?php echo jobs_h($job['summary'] ?? ''); ?></p>
+              <?php if (!empty($job['needs'])): ?>
+                <p><strong>Must-haves:</strong> <?php echo jobs_h(implode(' · ', (array)$job['needs'])); ?></p>
+              <?php endif; ?>
+              <?php if (!empty($job['questions'])): ?>
+                <p><strong>Form questions:</strong> <?php echo jobs_h(implode(' · ', array_map(static function ($q) {
+                  return (string)($q['label'] ?? '');
+                }, (array)$job['questions']))); ?></p>
+              <?php endif; ?>
               <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem">
                 <form method="post">
                   <input type="hidden" name="id" value="<?php echo jobs_h($job['id'] ?? ''); ?>">

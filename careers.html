@@ -18,7 +18,7 @@
       document.documentElement.setAttribute("data-theme", "light");
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=113">
+  <link rel="stylesheet" href="styles.css?v=114">
 </head>
 <body class="career-page" data-email="careers@recruitexa.com">
   <svg class="sprite" aria-hidden="true">
@@ -137,7 +137,7 @@
       <div class="wrap career-jobs-wrap" data-jobs hidden>
         <p class="kicker">Open roles</p>
         <h2>Live seats</h2>
-        <p class="section-lead">Posted from Recruitexa. Apply below and name the role in your note.</p>
+        <p class="section-lead">Each live seat has its own must-haves and apply questions. Open the form from the role you want.</p>
         <div class="career-jobs" data-jobs-list></div>
       </div>
 
@@ -172,7 +172,7 @@
         <div class="contact-copy">
           <p class="kicker">Apply</p>
           <h2>Apply for a live role, or send an open file.</h2>
-          <p class="contact-lead">Pick the seat, complete the form, and attach a CV. The application arrives at careers@recruitexa.com.</p>
+          <p class="contact-lead">Pick the seat. That role’s must-haves and extra questions load on the form. The application arrives at careers@recruitexa.com.</p>
           <div class="contact-channels">
             <a class="channel" href="mailto:careers@recruitexa.com">
               <span class="channel-ic" aria-hidden="true">
@@ -204,6 +204,8 @@
             <input type="hidden" name="intent" value="career">
             <p class="kicker">Application</p>
             <h3 class="form-title" data-apply-title>Apply to Recruitexa</h3>
+            <input type="hidden" name="job_id" value="" data-apply-job>
+            <div class="apply-needs" data-apply-needs hidden></div>
             <div class="form-grid">
               <label class="field field-wide">
                 <span>Role</span>
@@ -212,6 +214,7 @@
                   <option value="Open application">Open application</option>
                 </select>
               </label>
+              <div class="field-wide apply-extra" data-apply-extra></div>
               <label class="field">
                 <span>Name</span>
                 <input name="name" type="text" autocomplete="name" maxlength="120" required placeholder="Your name">
@@ -331,6 +334,6 @@
     </div>
   </footer>
 
-  <script src="main.js?v=52"></script>
+  <script src="main.js?v=53"></script>
 </body>
 </html>

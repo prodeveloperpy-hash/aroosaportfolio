@@ -39,6 +39,8 @@ $message = function_exists('mb_substr') ? mb_substr($message, 0, 4000) : substr(
 
 $intent = strtolower(clean_line($_POST['intent'] ?? '', 40));
 $isCareer = $intent === 'career';
+$jobId = clean_line($_POST['job_id'] ?? '', 32);
+$jobAnswers = [];
 
 if (strlen($name) < 2 || !filter_var($replyTo, FILTER_VALIDATE_EMAIL) || strlen($service) < 2 || strlen($message) < 9) {
   http_response_code(422);
@@ -49,6 +51,34 @@ if ($isCareer && (strlen($role) < 2 || strlen($phone) < 6 || strlen($timeline) <
   http_response_code(422);
   echo json_encode(['ok' => false, 'error' => 'Please complete the application fields and try again.']);
   exit;
+}
+if ($isCareer && $jobId !== '') {
+  require_once __DIR__ . '/jobs-lib.php';
+  $liveJob = jobs_find_live($jobId);
+  if (!$liveJob) {
+    http_response_code(422);
+    echo json_encode(['ok' => false, 'error' => 'That role is no longer open. Choose another seat or an open application.']);
+    exit;
+  }
+  $role = (string)($liveJob['title'] ?? $role);
+  $posted = is_array($_POST['apply_q'] ?? null) ? $_POST['apply_q'] : [];
+  foreach ((array)($liveJob['questions'] ?? []) as $q) {
+    if (!is_array($q)) {
+      continue;
+    }
+    $qid = clean_line($q['id'] ?? '', 12);
+    $qlabel = clean_line($q['label'] ?? '', 160);
+    if ($qid === '' || $qlabel === '') {
+      continue;
+    }
+    $answer = clean_line($posted[$qid] ?? '', 400);
+    if (!empty($q['required']) && strlen($answer) < 2) {
+      http_response_code(422);
+      echo json_encode(['ok' => false, 'error' => 'Please answer: ' . $qlabel]);
+      exit;
+    }
+    $jobAnswers[] = $qlabel . ': ' . ($answer !== '' ? $answer : '-');
+  }
 }
 
 $domain = 'recruitexa.com';
@@ -62,6 +92,9 @@ if ($isCareer) {
     . "Phone: {$phone}\n"
     . "WhatsApp: " . ($whatsapp !== '' ? $whatsapp : '-') . "\n"
     . "Experience: " . ($experience !== '' ? $experience : '-') . "\n";
+  if ($jobAnswers) {
+    $body .= "Role questions:\n" . implode("\n", $jobAnswers) . "\n";
+  }
 }
 $body .= "Regarding: {$service}\n"
   . "Location / timeline: " . ($timeline !== '' ? $timeline : '-') . "\n"
