@@ -315,12 +315,23 @@ if ($fileError !== UPLOAD_ERR_NO_FILE) {
   }
 }
 
+$blockedNotify = ['fiazmalana193@gmail.com'];
 $recipients = $isCareer ? [$mailbox] : ($config['to'] ?? discover_mailboxes($domain, $mailbox));
 if (!is_array($recipients) || $recipients === []) {
   $recipients = [$mailbox];
 }
-$recipients = array_values(array_unique(array_filter($recipients, static function ($addr) {
-  return (bool) filter_var($addr, FILTER_VALIDATE_EMAIL);
+$recipients = array_values(array_unique(array_filter($recipients, static function ($addr) use ($isCareer, $blockedNotify) {
+  $addr = strtolower(trim((string)$addr));
+  if (!filter_var($addr, FILTER_VALIDATE_EMAIL)) {
+    return false;
+  }
+  if (in_array($addr, $blockedNotify, true)) {
+    return false;
+  }
+  if ($isCareer && $addr !== 'careers@recruitexa.com') {
+    return false;
+  }
+  return true;
 })));
 if ($recipients === []) {
   $recipients = [$mailbox];

@@ -8,5 +8,6 @@ return [
   'user' => 'info@recruitexa.com',
   'pass' => 'YOUR_MAILBOX_PASSWORD',
   // Leave this out to auto-detect every cPanel mailbox on recruitexa.com.
+  // Never add Gmail here. Career applications only go to careers@recruitexa.com.
   // 'to' => ['info@recruitexa.com', 'hello@recruitexa.com'],
 ];
